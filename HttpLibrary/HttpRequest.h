@@ -1,5 +1,6 @@
 #pragma once
 #include "RequestType.h"
+#include <iostream>
 
 class HttpRequest
 {
@@ -25,6 +26,7 @@ class HttpRequest
 		char* const getPathToResource() const;
 		double getProtocolVersion() const;
 
+		friend std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest);
+
 		HttpRequest(char* src);
 };
-

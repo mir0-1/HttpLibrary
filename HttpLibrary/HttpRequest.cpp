@@ -1,8 +1,10 @@
 #include "HttpRequest.h"
-#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-#include <string>
+#include <iostream>
+
+#define DEBUG_LOGS
+#include "debug.h"
 
 #define VALIDATE_PTR(src) if (src == nullptr) return
 
@@ -35,7 +37,7 @@ char* HttpRequest::parseRequestType(char* src)
 				if (!recognizedRequests[reqIndex][j] || src[j] != recognizedRequests[reqIndex][j])
 				{
 					matchFlag = false;
-					break;
+					return nullptr;
 				}
 			}
 			if (matchFlag == true)
@@ -69,6 +71,7 @@ char* HttpRequest::copyPathToResource(char* src)
 
 char* HttpRequest::parseProtocolVersion(char* src)
 {
+	DEBUG_OUT("info", "Parsing protocolVersion");
 	bool matchFlag = true;
 	int versionStartIndex = -1;
 	int i, j;
@@ -92,6 +95,10 @@ char* HttpRequest::parseProtocolVersion(char* src)
 
 	if (matchFlag)
 		protocolVersion = strtod(&src[versionStartIndex], nullptr);
+	else
+	{
+		DEBUG_OUT("info", "Something with protocolVersion did not parse correctly");
+	}
 
 	return &src[i + 1];
 }
@@ -137,4 +144,14 @@ HttpRequest::HttpRequest(char* src)
 	parseProtocolVersion(src);
 
 	valid = true;
+}
+
+std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest)
+{
+	return ostream << "{" << std::endl <<
+	"\tisValid:" << httpRequest.isValid() << std::endl <<
+	"\trequestType: " << httpRequest.recognizedRequests[httpRequest.getRequestType()] << std::endl <<
+	"\tprotocolVersion: " << httpRequest.getProtocolVersion() << std::endl <<
+	"\tpathToResource: " << httpRequest.getPathToResource() << std::endl <<
+	"}";
 }
