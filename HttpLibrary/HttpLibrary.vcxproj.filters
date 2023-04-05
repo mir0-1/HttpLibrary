@@ -21,7 +21,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HttpParameter.cpp">
+    <ClCompile Include="HttpParametersBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpParametersMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpParameterValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-HttpRequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +41,19 @@
     <ClInclude Include="RequestType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HttpParameter.h">
+    <ClInclude Include="HttpParametersBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpParametersMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpParameterValue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test-HttpRequest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
