@@ -1,6 +1,6 @@
 #pragma once
 #include "RequestType.h"
-#include "HttpParametersBuilder.h"
+#include "HttpMapBuilder.h"
 #include <iostream>
 
 class HttpRequest
@@ -15,20 +15,21 @@ class HttpRequest
 		std::string* pathToResource;
 		double protocolVersion;
 
-		HttpParametersBuilder httpParametersBuilder;
+		HttpMapBuilder<HttpParameterValue> httpParametersBuilder;
 
 	private:
 		char* parseRequestType(char* src);
 		char* copyPathToResource(char* src);
 		char* parseProtocolVersion(char* src);
 		char* parseParametersFromResourcePath(char* src);
+		char* validateNewlinePresent(char* src);
 
 	public:
 		bool isValid() const;
 		RequestType getRequestType() const;
 		std::string getPathToResource() const;
 		double getProtocolVersion() const;
-		HttpParametersMap& getParametersMap();
+		HttpMap<HttpParameterValue>& getParametersMap();
 
 		friend std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest);
 

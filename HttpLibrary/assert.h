@@ -2,19 +2,22 @@
 #include <stdlib.h>
 #include <iostream>
 
-template <class Value>
-void assertEquals(Value expected, Value actual, bool stopTestingOnFail, const std::string& extraInfo, std::ostream* debugOutput)
+void assertTrue(bool condition, bool exitOnFail, const std::string& msg, std::ostream* debugOutput)
 {
-	if (debugOutput != nullptr)
-		(*debugOutput) << "[ASSERTEQUALS] {" << extraInfo << "} Expected: " << expected << "; Actual: " << actual << std::endl;
+	if (debugOutput)
+		(*debugOutput) << "[ASSERT] " << msg << ": ";
 
-	if (expected != actual)
+	if (!condition)
 	{
-		if (stopTestingOnFail)
-		{
-			if (debugOutput != nullptr)
-				(*debugOutput) << "[ASSERTEQUALS] {" << extraInfo << "} Halting the program..." << std::endl;
+		if (debugOutput)
+			(*debugOutput) << "Failure" << std::endl;
+
+		if (exitOnFail)
 			exit(-1);
-		}
+
+		return;
 	}
+
+	if (debugOutput)
+		(*debugOutput) << "Success" << std::endl;
 }

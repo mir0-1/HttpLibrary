@@ -1,12 +1,12 @@
-#include "HttpParametersBuilder.h"
+#include "HttpMapBuilder.h"
 
-void HttpParametersBuilder::setParameter(const std::string& key, const HttpParameterValue& value)
+void HttpMapBuilder::setValue(const std::string& key, const HttpParameterValue& value)
 {
 	if (!locked)
 		container.params[key] = value;
 }
 
-HttpParametersMap& HttpParametersBuilder::getContainer()
+HttpMap<T>& HttpMapBuilder::getContainer()
 {
 	locked = true;
 	return container;

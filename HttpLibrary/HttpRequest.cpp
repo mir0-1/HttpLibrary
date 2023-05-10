@@ -15,7 +15,7 @@ const char* HttpRequest::recognizedRequests[] =
 	"TRACE"
 };
 const int HttpRequest::numberOfRecognizedRequests = 6;
-const char* HttpRequest::commonProtocolSubstring = "HTTP/";
+const char* HttpRequest::commonProtocolSubstring = " HTTP/";
 
 
 char* HttpRequest::parseRequestType(char* src)
@@ -86,7 +86,10 @@ char* HttpRequest::parseProtocolVersion(char* src)
 	if (matchFlag)
 		protocolVersion = strtod(&src[versionStartIndex], nullptr);
 
-	return &src[i + 1];
+	if (protocolVersion == 0)
+		return nullptr;
+
+	return &src[i];
 }
 
 char* HttpRequest::parseParametersFromResourcePath(char* src)
@@ -115,7 +118,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 				std::string key(src + keyStartIndex, valueStartIndex - keyStartIndex - 1);
 				std::string value(src + valueStartIndex, (src[i] == '\0' ? i : (i - valueStartIndex)));
 
-				httpParametersBuilder.setParameter(key, HttpParameterValue(value));
+				httpParametersBuilder.setValue(key, HttpParameterValue(value));
 
 				keyStartIndex = i + 1;
 				valueStartIndex = -1;
@@ -130,7 +133,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 			break;
 	}
 
-	return src + i + 1;
+	return src + i;
 }
 
 bool HttpRequest::isValid() const
@@ -155,9 +158,23 @@ double HttpRequest::getProtocolVersion() const
 	return protocolVersion;
 }
 
-HttpParametersMap& HttpRequest::getParametersMap()
+HttpMap<HttpParameterValue>& HttpRequest::getParametersMap()
 {
 	return httpParametersBuilder.getContainer();
+}
+
+char* HttpRequest::validateNewlinePresent(char *src)
+{
+	if (*src != '\r')
+		return nullptr;
+
+	src++;
+
+	if (*src != '\n')
+		return nullptr;
+
+	src++;
+	return src;
 }
 
 HttpRequest::HttpRequest(char* src)
@@ -173,7 +190,11 @@ HttpRequest::HttpRequest(char* src)
 	src = parseParametersFromResourcePath(src);
 	VALIDATE_PTR(src);
 
-	parseProtocolVersion(src);
+	src = parseProtocolVersion(src);
+	VALIDATE_PTR(src);
+
+	src= validateNewlinePresent(src);
+	VALIDATE_PTR(src);
 
 	valid = true;
 }

@@ -124,17 +124,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HttpParametersMap.cpp" />
-    <ClCompile Include="HttpParametersBuilder.cpp" />
+    <ClCompile Include="HttpMap.cpp" />
+    <ClCompile Include="HttpMapBuilder.cpp" />
     <ClCompile Include="HttpParameterValue.cpp" />
     <ClCompile Include="HttpRequest.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="test-HttpRequest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assert.h" />
-    <ClInclude Include="HttpParametersMap.h" />
-    <ClInclude Include="HttpParametersBuilder.h" />
+    <ClInclude Include="HttpMap.h" />
+    <ClInclude Include="HttpMapBuilder.h" />
     <ClInclude Include="HttpParameterValue.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="RequestType.h" />
