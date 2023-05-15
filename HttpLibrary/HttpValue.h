@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class HttpParameterValue
+class HttpValue
 {
 	private:
 		bool nullReference;
@@ -13,7 +13,6 @@ class HttpParameterValue
 		bool getAsBool() const;
 		bool isNull() const;
 
-		HttpParameterValue(const std::string& value);
-		HttpParameterValue();
+		HttpValue(const std::string& value);
+		HttpValue();
 };
-

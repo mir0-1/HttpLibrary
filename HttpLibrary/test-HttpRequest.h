@@ -40,17 +40,17 @@ void test_HttpRequest_multipleExistingParameters()
 
 	// When: the request string is sent to HttpRequest constructor
 	HttpRequest httpRequest(request);
-	const HttpMap<HttpParameterValue>& parameters = httpRequest.getParametersMap();
+	const HttpMap& parameters = httpRequest.getParametersMap();
 
 
 	// Then:	both Parameters should be present in the map
 	//			key "firstParameter" should be non-null have a value "value"
 	//			key "secondParameter" should be non-null and have a value 343, obtainable as int
-	HttpParameterValue expectedFirst("value");
-	HttpParameterValue expectedSecond("343");
+	HttpValue expectedFirst("value");
+	HttpValue expectedSecond("343");
 
-	const HttpParameterValue& actualFirst = parameters.getParameter("firstParameter");
-	const HttpParameterValue& actualSecond = parameters.getParameter("secondParameter");
+	const HttpValue& actualFirst = parameters.getParameter("firstParameter");
+	const HttpValue& actualSecond = parameters.getParameter("secondParameter");
 
 	assertTrue(!actualFirst.isNull(), true, "Testing first HttpParameter not null", &std::cout);
 	assertTrue(!actualSecond.isNull(), true, "Testing second HttpParameter not null", &std::cout);
@@ -65,7 +65,7 @@ void test_HttpRequest_nullParameter()
 
 	// When: the request string is sent to HttpRequest constructor
 	HttpRequest httpRequest(request);
-	const HttpMap<HttpParameterValue>& parameters = httpRequest.getParametersMap();
+	const HttpMap& parameters = httpRequest.getParametersMap();
 
 	assertTrue(parameters.getParameter("imaginaryParameter").isNull(), true, "Testing null parameters", &std::cout);
 }
@@ -83,11 +83,25 @@ void test_HttpRequest_protocolVersionGeneral()
 
 void test_HttpRequest_protocolVersionUncommon()
 {
-	// Given: valid GET request
+	// Given: valid GET request, parameters present
 	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/2\r\n\r\n";
 
 	// When: the request string is sent to HttpRequest constructor
 	HttpRequest httpRequest(request);
 
 	assertTrue(httpRequest.getProtocolVersion() == 2.0, true, "Testing 2 protocol version with parameters", &std::cout);
+}
+
+void test_HttpRequest_nonCookieHeader()
+{
+	// Given: valid GET request, no parameters, single non-cookie header present
+	char request[] = "GET /my/path HTTP/1.1\r\nMyHeader: value";
+
+	// When: the request string is sent to HttpRequest constructor
+	HttpRequest httpRequest(request);
+
+	const HttpMap& headers = httpRequest.getHeadersMap();
+
+	assertTrue(headers.hasParameter("MyHeader"), true, "Testing header presence", &std::cout);
+	assertTrue(headers.getParameter("MyHeader").getAsString() == "value", true, "Testing header value correctness", &std::cout);
 }

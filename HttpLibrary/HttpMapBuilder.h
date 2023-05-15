@@ -1,14 +1,14 @@
 #pragma once
 #include "HttpMap.h"
+#include "HttpValue.h"
 
-template <class T>
 class HttpMapBuilder
 {
 	private:
-		HttpMap<T> container;
+		HttpMap container;
 		bool locked = false;
 
 	public:
-		void setValue(const std::string& key, const T& value);
-		HttpMap<T>& getContainer();
+		void setValue(const std::string& key, const HttpValue& value);
+		HttpMap& getContainer();
 };

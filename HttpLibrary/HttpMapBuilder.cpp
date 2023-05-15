@@ -1,17 +1,13 @@
 #include "HttpMapBuilder.h"
 
-template <class T>
-void HttpMapBuilder<T>::setValue(const std::string& key, const T& value)
+void HttpMapBuilder::setValue(const std::string& key, const HttpValue& value)
 {
 	if (!locked)
 		container.params[key] = value;
 }
 
-template <class T>
-HttpMap<T>& HttpMapBuilder<T>::getContainer()
+HttpMap& HttpMapBuilder::getContainer()
 {
 	locked = true;
 	return container;
 }
-
-template class HttpMapBuilder<HttpParameterValue>;

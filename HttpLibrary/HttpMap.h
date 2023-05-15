@@ -1,20 +1,18 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include "HttpParameterValue.h"
+#include "HttpValue.h"
 
-template <class T>
 class HttpMapBuilder;
 
-template <class T>
 class HttpMap
 {
 	private:
-		std::unordered_map<std::string, T> params;
+		std::unordered_map<std::string, HttpValue> params;
 
 	public:
-		const T& getParameter(const std::string& key) const;
+		const HttpValue& getParameter(const std::string& key) const;
 		bool hasParameter(const std::string& key) const;
 
-		friend class HttpMapBuilder<T>;
+		friend class HttpMapBuilder;
 };

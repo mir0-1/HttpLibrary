@@ -101,6 +101,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 
 	int keyStartIndex = 0;
 	int valueStartIndex = -1;
+	bool isSpace = false;
 
 	int i;
 	for (i = keyStartIndex; ; i++)
@@ -111,14 +112,23 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 		if (src[i] == '=')
 			valueStartIndex = i + 1;
 
-		else if (src[i] == '&' || isspace(src[i]))
+		else if (src[i] == '&' || (isSpace = isspace(src[i])))
 		{
 			if (valueStartIndex != -1)
 			{
-				std::string key(src + keyStartIndex, valueStartIndex - keyStartIndex - 1);
-				std::string value(src + valueStartIndex, (src[i] == '\0' ? i : (i - valueStartIndex)));
+				int keyEndIndex = valueStartIndex - 1;
+				int valueEndIndex = ((src[i] == '\0') ? i + valueStartIndex : i);
 
-				httpParametersBuilder.setValue(key, HttpParameterValue(value));
+				char tempKeyChar = src[keyEndIndex];
+				char tempValueChar = src[valueEndIndex];
+
+				src[keyEndIndex] = '\0';
+				src[valueEndIndex] = '\0';
+
+				httpParametersBuilder.setValue(src + keyStartIndex, HttpValue(src + valueStartIndex));
+
+				src[keyEndIndex] = tempKeyChar;
+				src[valueEndIndex] = tempValueChar;
 
 				keyStartIndex = i + 1;
 				valueStartIndex = -1;
@@ -129,7 +139,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 			}
 		}
 
-		if (isspace(src[i]))
+		if (isSpace)
 			break;
 	}
 
@@ -158,9 +168,14 @@ double HttpRequest::getProtocolVersion() const
 	return protocolVersion;
 }
 
-HttpMap<HttpParameterValue>& HttpRequest::getParametersMap()
+HttpMap& HttpRequest::getParametersMap()
 {
 	return httpParametersBuilder.getContainer();
+}
+
+HttpMap& HttpRequest::getHeadersMap()
+{
+	return httpHeadersBuilder.getContainer();
 }
 
 char* HttpRequest::validateNewlinePresent(char *src)
@@ -175,6 +190,47 @@ char* HttpRequest::validateNewlinePresent(char *src)
 
 	src++;
 	return src;
+}
+
+char* HttpRequest::parseHeaders(char* src)
+{
+	if (src == nullptr || *src == '\0')
+		return nullptr;
+
+	if (*src == '\r' && *(src + 1) == '\n')
+		return src++;
+
+	int i;
+	int startIndex = 0;
+
+	for (i = startIndex; src[i] && src[i] != ':'; i++);
+	if (src[i] != ':')
+		return nullptr;
+	char* colonCharAddress = &src[i];
+	src[i] = '\0';
+	i++;
+	if (!isspace(src[i]))
+	{
+		*colonCharAddress = ':';
+		return nullptr;
+	}
+
+	char prevSpace = src[i];
+	char* spaceCharAddress = &src[i];
+
+	src[i] = '\0';
+	if (!strcmp(src, "Cookie:"));
+	else
+		src = parseHeaderValueCommon(src, &src[i+1]);
+
+	*spaceCharAddress = prevSpace;
+	*colonCharAddress = ':';
+}
+
+char* HttpRequest::parseHeaderValueCommon(char* key, char* value)
+{
+	httpHeadersBuilder.setValue(key, HttpValue(value));
+	return nullptr;
 }
 
 HttpRequest::HttpRequest(char* src)
@@ -193,8 +249,10 @@ HttpRequest::HttpRequest(char* src)
 	src = parseProtocolVersion(src);
 	VALIDATE_PTR(src);
 
-	src= validateNewlinePresent(src);
+	src = validateNewlinePresent(src);
 	VALIDATE_PTR(src);
+
+	src = parseHeaders(src);
 
 	valid = true;
 }

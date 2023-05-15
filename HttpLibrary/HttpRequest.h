@@ -15,7 +15,9 @@ class HttpRequest
 		std::string* pathToResource;
 		double protocolVersion;
 
-		HttpMapBuilder<HttpParameterValue> httpParametersBuilder;
+		HttpMapBuilder httpParametersBuilder;
+		HttpMapBuilder httpHeadersBuilder;
+		HttpMapBuilder httpCookiesBuilder;
 
 	private:
 		char* parseRequestType(char* src);
@@ -23,13 +25,16 @@ class HttpRequest
 		char* parseProtocolVersion(char* src);
 		char* parseParametersFromResourcePath(char* src);
 		char* validateNewlinePresent(char* src);
+		char* parseHeaders(char* src);
+		char* parseHeaderValueCommon(char* key, char* value);
 
 	public:
 		bool isValid() const;
 		RequestType getRequestType() const;
 		std::string getPathToResource() const;
 		double getProtocolVersion() const;
-		HttpMap<HttpParameterValue>& getParametersMap();
+		HttpMap& getParametersMap();
+		HttpMap& getHeadersMap();
 
 		friend std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest);
 

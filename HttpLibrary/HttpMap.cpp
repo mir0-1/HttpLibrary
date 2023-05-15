@@ -1,9 +1,8 @@
 #include "HttpMap.h"
 
-template <class T>
-const T& HttpMap<T>::getParameter(const std::string& key) const
+const HttpValue& HttpMap::getParameter(const std::string& key) const
 {
-	static HttpParameterValue nullParameter;
+	static HttpValue nullParameter;
 
 	auto it = params.find(key);
 	if (it != params.end())
@@ -11,10 +10,7 @@ const T& HttpMap<T>::getParameter(const std::string& key) const
 	return nullParameter;
 }
 
-template <class T>
-bool HttpMap<T>::hasParameter(const std::string& key) const
+bool HttpMap::hasParameter(const std::string& key) const
 {
 	return params.find(key) != params.end();
 }
-
-template class HttpMap<HttpParameterValue>;
