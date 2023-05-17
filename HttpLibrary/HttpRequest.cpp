@@ -15,16 +15,13 @@ const char* HttpRequest::recognizedRequests[] =
 	"TRACE"
 };
 const int HttpRequest::numberOfRecognizedRequests = 6;
-const char* HttpRequest::commonProtocolSubstring = " HTTP/";
+const char* HttpRequest::commonProtocolSubstring = "HTTP/";
 
 
 char* HttpRequest::parseRequestType(char* src)
 {
 	for (int i = 0; src[i]; i++)
 	{
-		if (isspace(src[i]))
-			continue;
-
 		for (int reqIndex = 0; reqIndex < numberOfRecognizedRequests; reqIndex++)
 		{
 			bool matchFlag = true;
@@ -258,17 +255,30 @@ char* HttpRequest::parseHeaderValueNonCookie(char* key, char* value)
 	return &value[i+1];
 }
 
+char* HttpRequest::ignoreExtraSpaces(char* src)
+{
+	if (src == nullptr)
+		return nullptr;
+
+	while (isspace(*src))
+		src++;
+
+	return src;
+}
+
 HttpRequest::HttpRequest(char* src)
 {
 	VALIDATE_PTR(src);
 
 	src = parseRequestType(src);
+	src = ignoreExtraSpaces(src);
 	VALIDATE_PTR(src);
 
 	src = copyPathToResource(src);
 	VALIDATE_PTR(src);
 
 	src = parseParametersFromResourcePath(src);
+	src = ignoreExtraSpaces(src);
 	VALIDATE_PTR(src);
 
 	src = parseProtocolVersion(src);

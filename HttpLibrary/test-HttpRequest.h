@@ -95,6 +95,23 @@ void test_HttpRequest_query_multipleEmptyValueParam()
 	assertTrue(parametersMap.getParameter("param2").getAsString() == "", true, "Testing second if param2 actually has empty value", &std::cout);
 }
 
+void test_HttpRequest_query_mixedParams()
+{
+	char request[] = "GET /my/path?param1=&&param2&&&param3=& HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& parametersMap = httpRequest.getParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"param1=&&param2&&&param3=&\"", &std::cout);
+	assertTrue(parametersMap.hasParameter("param1"), true, "Testing first if empty value param1 is present (when there is &/&&/&&&)", &std::cout);
+	assertTrue(parametersMap.getParameter("param1").getAsString() == "", true, "Testing first if param1 actually has empty value (when there is &/&&/&&&)", &std::cout);
+	assertTrue(!parametersMap.hasParameter("param2"), true, "Testing second if param2 is absent, not in key-value format (when there is &/&&/&&&)", &std::cout);
+	assertTrue(parametersMap.hasParameter("param3"), true, "Testing third if empty value param3 is present (when there is &/&&/&&&)", &std::cout);
+	assertTrue(parametersMap.getParameter("param3").getAsString() == "", true, "Testing third if param3 actually has empty value (when there is &/&&/&&&)", &std::cout);
+
+}
+
 void test_HttpRequest_query_multipleEmptyValueParamAndAmpersand()
 {
 	char request[] = "GET /my/path?param1=&param2=& HTTP/1.1\r\n\r\n";
@@ -132,7 +149,7 @@ void test_HttpRequest_query_multipleExistingParameters()
 
 void test_HttpRequest_query_multipleExistingParametersAndAmpersand()
 {
-	char request[] = "GET /my/path?firstParameter=value&secondParameter=343& HTTP/1.1\r\n\r\n";
+	char request[] = "GET  /my/path?firstParameter=value&secondParameter=343&   HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
 	const HttpMap& parameters = httpRequest.getParametersMap();
@@ -152,7 +169,7 @@ void test_HttpRequest_query_multipleExistingParametersAndAmpersand()
 
 void test_HttpRequest_query_multipleExistingParametersAndMultipleSeparator()
 {
-	char request[] = "GET /my/path?firstParameter=value&&&secondParameter=343&& HTTP/1.1\r\n\r\n";
+	char request[] = "GET  /my/path?firstParameter=value&&&secondParameter=343&&  HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
 	const HttpMap& parameters = httpRequest.getParametersMap();
@@ -172,7 +189,7 @@ void test_HttpRequest_query_multipleExistingParametersAndMultipleSeparator()
 
 void test_HttpRequest_query_fictionalParameter()
 {
-	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/1.1\r\n\r\n";
+	char request[] = "GET   /my/path?firstParameter=value&secondParameter=343   HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
 	const HttpMap& parameters = httpRequest.getParametersMap();
@@ -182,7 +199,7 @@ void test_HttpRequest_query_fictionalParameter()
 
 void test_HttpRequest_protocolVersion_general()
 {
-	char request[] = "GET /my/path HTTP/1.1\r\n\r\n";
+	char request[] = "GET  /my/path  HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
 
@@ -192,7 +209,7 @@ void test_HttpRequest_protocolVersion_general()
 
 void test_HttpRequest_protocolVersion_uncommon()
 {
-	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/2\r\n\r\n";
+	char request[] = "GET   /my/path?firstParameter=value&secondParameter=343   HTTP/2\r\n\r\n";
 
 	HttpRequest httpRequest(request);
 
@@ -202,11 +219,20 @@ void test_HttpRequest_protocolVersion_uncommon()
 
 void test_HttpRequest_protocolVersion_notANumber()
 {
-	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/NaN\r\n\r\n";
+	char request[] = "GET /my/path?firstParameter=value&secondParameter=343  HTTP/NaN\r\n\r\n";
 
 	HttpRequest httpRequest(request);
 
 	assertTrue(!httpRequest.isValid(), true, "Testing if HTTP/NaN protocol request is invalid", &std::cout);
+}
+
+void test_HttpRequest_protocolVersion_incorrectName()
+{
+	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTPS/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+
+	assertTrue(!httpRequest.isValid(), true, "Testing if HTTPS/1.1 protocol request is invalid", &std::cout);
 }
 
 void test_HttpRequest_headers_singleNonCookie()

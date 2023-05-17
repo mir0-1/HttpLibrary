@@ -27,6 +27,7 @@ class HttpRequest
 		char* validatePreHeaderBorderPresent(char* src);
 		char* parseHeaders(char* src);
 		char* parseHeaderValueNonCookie(char* key, char* value);
+		char* ignoreExtraSpaces(char* src);
 
 	public:
 		bool isValid() const;

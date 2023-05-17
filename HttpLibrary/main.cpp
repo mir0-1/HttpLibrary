@@ -15,9 +15,11 @@ int main()
 	test_HttpRequest_query_multipleExistingParametersAndAmpersand();
 	test_HttpRequest_query_multipleExistingParametersAndMultipleSeparator();
 	test_HttpRequest_query_fictionalParameter();
+	test_HttpRequest_query_mixedParams();
 	test_HttpRequest_protocolVersion_general();
 	test_HttpRequest_protocolVersion_uncommon();
 	test_HttpRequest_protocolVersion_notANumber();
+	test_HttpRequest_protocolVersion_incorrectName();
 	test_HttpRequest_headers_singleNonCookie();
 	test_HttpRequest_headers_multipleNonCookies();
 	test_HttpRequest_headers_fictionalNonCookie();
