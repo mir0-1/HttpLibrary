@@ -83,10 +83,12 @@ char* HttpRequest::parseProtocolVersion(char* src)
 			versionStartIndex = i;
 	}
 
-	if (matchFlag)
-		protocolVersion = strtod(&src[versionStartIndex], nullptr);
+	if (!matchFlag)
+		return nullptr;
+	
+	protocolVersion = strtod(&src[versionStartIndex], nullptr);
 
-	if (protocolVersion == 0)
+	if (isnan<double>(protocolVersion))
 		return nullptr;
 
 	return &src[i];
@@ -95,7 +97,11 @@ char* HttpRequest::parseProtocolVersion(char* src)
 char* HttpRequest::parseParametersFromResourcePath(char* src)
 {
 	if (*src == '?')
+	{
 		src++;
+		if (isspace(*src))
+			return src++;
+	}
 	else
 		return src++;
 
@@ -104,7 +110,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 	bool isSpace = false;
 
 	int i;
-	for (i = keyStartIndex; ; i++)
+	for (i = 0; ; i++)
 	{
 		if (src[i] == '\0')
 			return nullptr;
@@ -129,14 +135,10 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 
 				src[keyEndIndex] = tempKeyChar;
 				src[valueEndIndex] = tempValueChar;
+			}
 
-				keyStartIndex = i + 1;
-				valueStartIndex = -1;
-			}
-			else
-			{
-				return nullptr;
-			}
+			keyStartIndex = i + 1;
+			valueStartIndex = -1;
 		}
 
 		if (isSpace)
@@ -178,7 +180,7 @@ HttpMap& HttpRequest::getHeadersMap()
 	return httpHeadersBuilder.getContainer();
 }
 
-char* HttpRequest::validateNewlinePresent(char *src)
+char* HttpRequest::validatePreHeaderBorderPresent(char *src)
 {
 	if (*src != '\r')
 		return nullptr;
@@ -197,40 +199,63 @@ char* HttpRequest::parseHeaders(char* src)
 	if (src == nullptr || *src == '\0')
 		return nullptr;
 
-	if (*src == '\r' && *(src + 1) == '\n')
-		return src++;
-
-	int i;
-	int startIndex = 0;
-
-	for (i = startIndex; src[i] && src[i] != ':'; i++);
-	if (src[i] != ':')
-		return nullptr;
-	char* colonCharAddress = &src[i];
-	src[i] = '\0';
-	i++;
-	if (!isspace(src[i]))
+	do
 	{
+		if (*src == '\r' && *(src + 1) == '\n')
+			return src+=2;
+
+		int i;
+		int startIndex = 0;
+
+		for (i = startIndex; src[i] && src[i] != ':'; i++);
+		if (src[i] != ':')
+			return nullptr;
+		char* colonCharAddress = &src[i];
+		src[i] = '\0';
+		i++;
+		if (!isspace(src[i]))
+		{
+			*colonCharAddress = ':';
+			return nullptr;
+		}
+
+		char prevSpace = src[i];
+		char* spaceCharAddress = &src[i];
+
+		src[i] = '\0';
+		if (!strcmp(src, "Cookie:"));
+		else
+			src = parseHeaderValueNonCookie(src, &src[i + 1]);
+
+		*spaceCharAddress = prevSpace;
 		*colonCharAddress = ':';
-		return nullptr;
-	}
+	} while (src && *src);
 
-	char prevSpace = src[i];
-	char* spaceCharAddress = &src[i];
-
-	src[i] = '\0';
-	if (!strcmp(src, "Cookie:"));
-	else
-		src = parseHeaderValueCommon(src, &src[i+1]);
-
-	*spaceCharAddress = prevSpace;
-	*colonCharAddress = ':';
+	return src;
 }
 
-char* HttpRequest::parseHeaderValueCommon(char* key, char* value)
+char* HttpRequest::parseHeaderValueNonCookie(char* key, char* value)
 {
+	if (*key == '\0' || *value == '\0')
+		return nullptr;
+
+	int i;
+
+	for (i = 0; value[i] && value[i] != '\r'; i++);
+	if (value[i] != '\r')
+		return nullptr;
+
+	i++;
+	if (value[i] != '\n')
+		return nullptr;
+
+	value[i - 1] = '\0';
+	value[i] = '\0';
 	httpHeadersBuilder.setValue(key, HttpValue(value));
-	return nullptr;
+	value[i - 1] = '\r';
+	value[i] = '\n';
+
+	return &value[i+1];
 }
 
 HttpRequest::HttpRequest(char* src)
@@ -249,7 +274,7 @@ HttpRequest::HttpRequest(char* src)
 	src = parseProtocolVersion(src);
 	VALIDATE_PTR(src);
 
-	src = validateNewlinePresent(src);
+	src = validatePreHeaderBorderPresent(src);
 	VALIDATE_PTR(src);
 
 	src = parseHeaders(src);

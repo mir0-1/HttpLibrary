@@ -24,9 +24,9 @@ class HttpRequest
 		char* copyPathToResource(char* src);
 		char* parseProtocolVersion(char* src);
 		char* parseParametersFromResourcePath(char* src);
-		char* validateNewlinePresent(char* src);
+		char* validatePreHeaderBorderPresent(char* src);
 		char* parseHeaders(char* src);
-		char* parseHeaderValueCommon(char* key, char* value);
+		char* parseHeaderValueNonCookie(char* key, char* value);
 
 	public:
 		bool isValid() const;
