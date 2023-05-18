@@ -3,7 +3,7 @@
 void HttpMapBuilder::setValue(const std::string& key, const HttpValue& value)
 {
 	if (!locked)
-		container.params[key] = value;
+		container.keys[key] = value;
 }
 
 HttpMap& HttpMapBuilder::getContainer()

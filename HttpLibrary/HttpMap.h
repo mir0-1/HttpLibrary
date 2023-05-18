@@ -8,11 +8,11 @@ class HttpMapBuilder;
 class HttpMap
 {
 	private:
-		std::unordered_map<std::string, HttpValue> params;
+		std::unordered_map<std::string, HttpValue> keys;
 
 	public:
-		const HttpValue& getParameter(const std::string& key) const;
-		bool hasParameter(const std::string& key) const;
+		const HttpValue& getValue(const std::string& key) const;
+		bool hasKey(const std::string& key) const;
 
 		friend class HttpMapBuilder;
 };

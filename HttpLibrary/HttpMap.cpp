@@ -1,16 +1,16 @@
 #include "HttpMap.h"
 
-const HttpValue& HttpMap::getParameter(const std::string& key) const
+const HttpValue& HttpMap::getValue(const std::string& key) const
 {
-	static HttpValue nullParameter;
+	static HttpValue nullKey;
 
-	auto it = params.find(key);
-	if (it != params.end())
+	auto it = keys.find(key);
+	if (it != keys.end())
 		return it->second;
-	return nullParameter;
+	return nullKey;
 }
 
-bool HttpMap::hasParameter(const std::string& key) const
+bool HttpMap::hasKey(const std::string& key) const
 {
-	return params.find(key) != params.end();
+	return keys.find(key) != keys.end();
 }
