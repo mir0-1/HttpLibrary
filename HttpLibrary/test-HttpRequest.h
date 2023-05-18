@@ -8,8 +8,8 @@ void test_HttpRequest_requestType()
 	HttpRequest httpRequest(request);
 
 
-	assertTrue(httpRequest.isValid(), true, "Testing if simple GET request is valid (extra spaces)", &std::cout);
-	assertTrue(httpRequest.getRequestType() == RequestType::POST, true, "Testing RequestType (extra spaces)", &std::cout);
+	assertTrue(httpRequest.isValid(), true, "Testing if simple POST request is valid", &std::cout);
+	assertTrue(httpRequest.getRequestType() == RequestType::POST, true, "Testing RequestType", &std::cout);
 }
 
 void test_HttpRequest_requestType_extraSpaces()
@@ -19,10 +19,9 @@ void test_HttpRequest_requestType_extraSpaces()
 	HttpRequest httpRequest(request);
 
 
-	assertTrue(httpRequest.isValid(), true, "Testing if simple GET request is valid", &std::cout);
-	assertTrue(httpRequest.getRequestType() == RequestType::POST, true, "Testing RequestType", &std::cout);
+	assertTrue(httpRequest.isValid(), true, "Testing if simple POST request is valid (extra spaces)", &std::cout);
+	assertTrue(httpRequest.getRequestType() == RequestType::POST, true, "Testing RequestType (extra spaces)", &std::cout);
 }
-
 
 void test_HttpRequest_pathToResource_valid()
 {
@@ -83,7 +82,7 @@ void test_HttpRequest_query_noKeyValueSeperator()
 	assertTrue(!parametersMap.hasKey("param1"), true, "Testing if valueless param1 is absent (not considered a map entry)", &std::cout);
 }
 
-void test_HttpRequest_query_singleEmptyValueParameter()
+void test_HttpRequest_query_singleParam_emptyValue()
 {
 	char request[] = "GET /my/path?param1= HTTP/1.1\r\n\r\n";
 
@@ -96,7 +95,33 @@ void test_HttpRequest_query_singleEmptyValueParameter()
 	assertTrue(parametersMap.getValue("param1").getAsString() == "", true, "Testing if param1 actually has empty value", &std::cout);
 }
 
-void test_HttpRequest_query_singleEmptyValueParamAndAmpersand()
+void test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandAfter()
+{
+	char request[] = "GET /my/path?param1====& HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?param1====&\"", &std::cout);
+	assertTrue(parametersMap.hasKey("param1==="), true, "Testing if empty value param1 is present (in query \"?param1====&\")", &std::cout);
+	assertTrue(parametersMap.getValue("param1===").getAsString() == "", true, "Testing if param1 actually has empty value (in query \"?param1====&\")", &std::cout);
+}
+
+void test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandBefore()
+{
+	char request[] = "GET /my/path?&param1==== HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?&param1====\"", &std::cout);
+	assertTrue(parametersMap.hasKey("param1==="), true, "Testing if empty value param1 is present (in query \"?&param1====&\")", &std::cout);
+	assertTrue(parametersMap.getValue("param1===").getAsString() == "", true, "Testing if param1 actually has empty value (in query \"?&param1====&\")", &std::cout);
+}
+
+void test_HttpRequest_query_singleParam_emptyValueAndAmpersand()
 {
 	char request[] = "GET /my/path?param1=& HTTP/1.1\r\n\r\n";
 
@@ -109,7 +134,7 @@ void test_HttpRequest_query_singleEmptyValueParamAndAmpersand()
 	assertTrue(parametersMap.getValue("param1").getAsString() == "", true, "Testing if param1 actually has empty value (when there is &)", &std::cout);
 }
 
-void test_HttpRequest_query_multipleEmptyValueParam()
+void test_HttpRequest_query_multipleParams_emptyValue()
 {
 	char request[] = "GET /my/path?param1=&param2= HTTP/1.1\r\n\r\n";
 
@@ -124,15 +149,15 @@ void test_HttpRequest_query_multipleEmptyValueParam()
 	assertTrue(parametersMap.getValue("param2").getAsString() == "", true, "Testing second if param2 actually has empty value", &std::cout);
 }
 
-void test_HttpRequest_query_mixedParams()
+void test_HttpRequest_query_multipleParams_allSeperatorChaos()
 {
-	char request[] = "GET /my/path?param1=&&param2&&&param3=& HTTP/1.1\r\n\r\n";
+	char request[] = "GET /my/path?==&param1=&&param2&&&param3=& HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
 
 	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
 
-	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"param1=&&param2&&&param3=&\"", &std::cout);
+	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"==&param1=&&param2&&&param3=&\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1"), true, "Testing first if empty value param1 is present (when there is &/&&/&&&)", &std::cout);
 	assertTrue(parametersMap.getValue("param1").getAsString() == "", true, "Testing first if param1 actually has empty value (when there is &/&&/&&&)", &std::cout);
 	assertTrue(!parametersMap.hasKey("param2"), true, "Testing second if param2 is absent, not in key-value format (when there is &/&&/&&&)", &std::cout);
@@ -141,7 +166,7 @@ void test_HttpRequest_query_mixedParams()
 
 }
 
-void test_HttpRequest_query_multipleEmptyValueParamAndAmpersand()
+void test_HttpRequest_query_multipleParams_emptyValueAndAmpersand()
 {
 	char request[] = "GET /my/path?param1=&param2=& HTTP/1.1\r\n\r\n";
 
@@ -156,7 +181,7 @@ void test_HttpRequest_query_multipleEmptyValueParamAndAmpersand()
 	assertTrue(parametersMap.getValue("param2").getAsString() == "", true, "Testing second if param2 actually has empty value (when there is &)", &std::cout);
 }
 
-void test_HttpRequest_query_multipleExistingParameters()
+void test_HttpRequest_query_multipleParams()
 {
 	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/1.1\r\n\r\n";
 
@@ -176,7 +201,7 @@ void test_HttpRequest_query_multipleExistingParameters()
 	assertTrue(expectedSecond.getAsInt() == actualSecond.getAsInt(), true, "Testing second HttpParameter value (as int)", &std::cout);
 }
 
-void test_HttpRequest_query_multipleExistingParametersAndAmpersand()
+void test_HttpRequest_query_multipleParams_ampersandAtEnd()
 {
 	char request[] = "GET /my/path?firstParameter=value&secondParameter=343& HTTP/1.1\r\n\r\n";
 
@@ -196,7 +221,7 @@ void test_HttpRequest_query_multipleExistingParametersAndAmpersand()
 	assertTrue(expectedSecond.getAsInt() == actualSecond.getAsInt(), true, "Testing second HttpParameter value (as int) (when there is &)", &std::cout);
 }
 
-void test_HttpRequest_query_multipleExistingParametersAndMultipleSeparator()
+void test_HttpRequest_query_multipleParams_multipleSeparator()
 {
 	char request[] = "GET /my/path?firstParameter=value&&&secondParameter=343&& HTTP/1.1\r\n\r\n";
 
@@ -216,7 +241,7 @@ void test_HttpRequest_query_multipleExistingParametersAndMultipleSeparator()
 	assertTrue(expectedSecond.getAsInt() == actualSecond.getAsInt(), true, "Testing second HttpParameter value (as int) (when there is &&&)", &std::cout);
 }
 
-void test_HttpRequest_query_fictionalParameter()
+void test_HttpRequest_query_multipleParams_fictionalParameter()
 {
 	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/1.1\r\n\r\n";
 
@@ -343,6 +368,45 @@ void test_HttpRequest_headers_singleCookie()
 	assertTrue(cookies.getValue("key1").getAsString() == "value1", true, "Testing single cookie value correctness", &std::cout);
 }
 
+void test_HttpRequest_headers_singleCookie_emptyValue()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: key1=\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if single cookie request is valid (empty value)", &std::cout);
+	assertTrue(cookies.hasKey("key1"), true, "Testing single cookie presence (empty value)", &std::cout);
+	assertTrue(cookies.getValue("key1").getAsString() == "", true, "Testing single cookie empty value correctness", &std::cout);
+}
+
+void test_HttpRequest_headers_singleCookie_oneKeyMultipleValues()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: key1=value1=value2\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if single cookie request is valid (one key two values)", &std::cout);
+	assertTrue(cookies.hasKey("key1=value1"), true, "Testing single cookie presence (one key two values)", &std::cout);
+	assertTrue(cookies.getValue("key1=value1").getAsString() == "value2", true, "Testing single cookie value correctness (one key two values)", &std::cout);
+}
+
+void test_HttpRequest_headers_singleCookie_oneKeyMultipleValues_extraSeperators()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: key1====value1===value2\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if single cookie request is valid (one key two values)", &std::cout);
+	assertTrue(cookies.hasKey("key1====value1=="), true, "Testing single cookie presence (one key two values)", &std::cout);
+	assertTrue(cookies.getValue("key1====value1==").getAsString() == "value2", true, "Testing single cookie value correctness (one key two values)", &std::cout);
+}
+
 void test_HttpRequest_headers_multipleCookies_sameHeader()
 {
 	char request[] = "GET /my/path HTTP/1.1\r\nCookie: MyCookie=value; SecondCookie=anotherValue\r\nSecondHeader: anotherValue\r\n";
@@ -358,6 +422,54 @@ void test_HttpRequest_headers_multipleCookies_sameHeader()
 	assertTrue(cookies.getValue("MyCookie").getAsString() == "value", true, "Testing first cookie value correctness (same header)", &std::cout);
 	assertTrue(cookies.hasKey("SecondCookie"), true, "Testing second cookie presence", &std::cout);
 	assertTrue(cookies.getValue("SecondCookie").getAsString() == "anotherValue", true, "Testing second cookie value correctness (same header)", &std::cout);
+}
+
+void test_HttpRequest_headers_multipleCookies_sameHeader_noValue()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: MyCookie=; SecondCookie=\r\nSecondHeader: anotherValue\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpMap& headers = httpRequest.getHeadersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header & no value)", &std::cout);
+	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header & no value)", &std::cout);
+	assertTrue(cookies.hasKey("MyCookie"), true, "Testing first cookie presence (same header & no value)", &std::cout);
+	assertTrue(cookies.getValue("MyCookie").getAsString() == "", true, "Testing first cookie value correctness (same header & no value)", &std::cout);
+	assertTrue(cookies.hasKey("SecondCookie"), true, "Testing second cookie presence", &std::cout);
+	assertTrue(cookies.getValue("SecondCookie").getAsString() == "", true, "Testing second cookie value correctness (same header & no value)", &std::cout);
+}
+
+void test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparator()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: MyCookie; SecondCookie\r\nSecondHeader: anotherValue\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpMap& headers = httpRequest.getHeadersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header & no value, no \'=\')", &std::cout);
+	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header & no value, no \'=\')", &std::cout);
+	assertTrue(!cookies.hasKey("MyCookie"), true, "Testing first cookie presence (same header & no value, no \'=\')", &std::cout);
+	assertTrue(!cookies.hasKey("SecondCookie"), true, "Testing second cookie presence (same header & no value, no \'=\')", &std::cout);
+}
+
+void test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparatorAndOneValid()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: MyCookie; SecondCookie=test\r\nSecondHeader: anotherValue\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpMap& headers = httpRequest.getHeadersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header & no value, no \'=\', 1 ok)", &std::cout);
+	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header & no value, no \'=\', 1 ok)", &std::cout);
+	assertTrue(!cookies.hasKey("MyCookie"), true, "Testing first cookie presence (same header & no value, no \'=\', 1 ok)", &std::cout);
+	assertTrue(cookies.hasKey("SecondCookie"), true, "Testing second cookie presence (same header & no value, no \'=\', 1 ok)", &std::cout);
+	assertTrue(cookies.getValue("SecondCookie").getAsString() == "test", true, "Testing second cookie value correctness (same header & no value, no \'=\', 1 ok)", &std::cout);
 }
 
 void test_HttpRequest_headers_multipleCookies_sameHeader_extraSpaces()
@@ -443,4 +555,42 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_spacesChaos()
 	assertTrue(cookies.getValue("MyCook ie").getAsString() == "va l ue", true, "Testing first cookie value correctness (\"spaces chaos\")", &std::cout);
 	assertTrue(cookies.hasKey("Secon dCookie"), true, "Testing second cookie presence (\"spaces chaos\")", &std::cout);
 	assertTrue(cookies.getValue("Secon dCookie").getAsString() == "anoth erValue ", true, "Testing second cookie value correctness (\"spaces chaos\")", &std::cout);
+}
+
+void test_HttpRequest_headers_multipleCookies_differentHeader_multipleSeparators()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie:MyCookie=value;;;SecondCookie=value;;\r\n  Cookie:;ThirdCookie=yetAnotherValue ;\r\nSecondHeader: anotherValue  \r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpMap& headers = httpRequest.getHeadersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (different header & multiple \';\')", &std::cout);
+	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (different header & multiple \';\')", &std::cout);
+	assertTrue(cookies.hasKey("MyCookie"), true, "Testing first cookie presence (different header & multiple \';\')", &std::cout);
+	assertTrue(cookies.getValue("MyCookie").getAsString() == "value", true, "Testing first cookie value correctness (different header & multiple \';\')", &std::cout);
+	assertTrue(cookies.hasKey("SecondCookie"), true, "Testing second cookie presence (different header)", &std::cout);
+	assertTrue(cookies.getValue("SecondCookie").getAsString() == "value", true, "Testing second cookie value correctness (different header & multiple \';\')", &std::cout);
+	assertTrue(cookies.hasKey("ThirdCookie"), true, "Testing third cookie presence (different header)", &std::cout);
+	assertTrue(cookies.getValue("ThirdCookie").getAsString() == "yetAnotherValue ", true, "Testing third cookie value correctness (different header & multiple \';\')", &std::cout);
+}
+
+void test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparators()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie:MyCookie===;;;SecondCookie==value;;\r\n  Cookie:;ThirdCookie====yetAnotherValue ;\r\nSecondHeader: anotherValue  \r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpMap& headers = httpRequest.getHeadersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(cookies.hasKey("MyCookie=="), true, "Testing first cookie presence (different header & multiple \';\')", &std::cout);
+	assertTrue(cookies.getValue("MyCookie==").getAsString() == "", true, "Testing first cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(cookies.hasKey("SecondCookie="), true, "Testing second cookie presence (different header)", &std::cout);
+	assertTrue(cookies.getValue("SecondCookie=").getAsString() == "value", true, "Testing second cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(cookies.hasKey("ThirdCookie==="), true, "Testing third cookie presence (different header)", &std::cout);
+	assertTrue(cookies.getValue("ThirdCookie===").getAsString() == "yetAnotherValue ", true, "Testing third cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
 }

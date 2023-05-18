@@ -53,5 +53,8 @@
     <ClInclude Include="HttpValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="test-HttpMapBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

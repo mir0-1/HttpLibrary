@@ -1,7 +1,15 @@
+#include "test-HttpMapBuilder.h"
 #include "test-HttpRequest.h"
 
 int main()
 {
+	test_HttpMapBuilder_addSimpleString();
+	test_HttpMapBuilder_addSimpleInteger();
+	test_HttpMapBuilder_addSimpleBool();
+	test_HttpMapBuilder_checkNonExistentIsNull();
+	test_HttpMapBuilder_lockAfterGetContainer();
+	test_HttpMapBuilder_override();
+
 	test_HttpRequest_requestType();
 	test_HttpRequest_requestType_extraSpaces();
 	test_HttpRequest_pathToResource_valid();
@@ -10,15 +18,17 @@ int main()
 	test_HttpRequest_query_doubleQuestionMarkOnly();
 	test_HttpRequest_query_ampersandOnly();
 	test_HttpRequest_query_noKeyValueSeperator();
-	test_HttpRequest_query_singleEmptyValueParameter();
-	test_HttpRequest_query_singleEmptyValueParamAndAmpersand();
-	test_HttpRequest_query_multipleEmptyValueParam();
-	test_HttpRequest_query_multipleEmptyValueParamAndAmpersand();
-	test_HttpRequest_query_multipleExistingParameters();
-	test_HttpRequest_query_multipleExistingParametersAndAmpersand();
-	test_HttpRequest_query_multipleExistingParametersAndMultipleSeparator();
-	test_HttpRequest_query_fictionalParameter();
-	test_HttpRequest_query_mixedParams();
+	test_HttpRequest_query_singleParam_emptyValue();
+	test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandAfter();
+	test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandBefore();
+	test_HttpRequest_query_singleParam_emptyValueAndAmpersand();
+	test_HttpRequest_query_multipleParams();
+	test_HttpRequest_query_multipleParams_emptyValue();
+	test_HttpRequest_query_multipleParams_emptyValueAndAmpersand();
+	test_HttpRequest_query_multipleParams_ampersandAtEnd();
+	test_HttpRequest_query_multipleParams_multipleSeparator();
+	test_HttpRequest_query_multipleParams_fictionalParameter();
+	test_HttpRequest_query_multipleParams_allSeperatorChaos();
 	test_HttpRequest_protocolVersion_valid();
 	test_HttpRequest_protocolVersion_valid_extraSpaces();
 	test_HttpRequest_protocolVersion_valid_futureVersion();
@@ -29,12 +39,20 @@ int main()
 	test_HttpRequest_headers_multipleNonCookies_spaceChaos();
 	test_HttpRequest_headers_fictionalNonCookie();
 	test_HttpRequest_headers_singleCookie();
+	test_HttpRequest_headers_singleCookie_emptyValue();
+	test_HttpRequest_headers_singleCookie_oneKeyMultipleValues();
+	test_HttpRequest_headers_singleCookie_oneKeyMultipleValues_extraSeperators();
 	test_HttpRequest_headers_multipleCookies_sameHeader();
+	test_HttpRequest_headers_multipleCookies_sameHeader_noValue();
+	test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparator();
+	test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparatorAndOneValid();
 	test_HttpRequest_headers_multipleCookies_sameHeader_extraSpaces();
 	test_HttpRequest_headers_multipleCookies_sameHeader_spaceInKey();
 	test_HttpRequest_headers_multipleCookies_differentHeader();
 	test_HttpRequest_headers_multipleCookies_differentHeader_extraSpaces();
 	test_HttpRequest_headers_multipleCookies_differentHeader_spacesChaos();
+	test_HttpRequest_headers_multipleCookies_differentHeader_multipleSeparators();
+	test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparators();
 
 	return 0;
 }

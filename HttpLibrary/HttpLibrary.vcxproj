@@ -137,6 +137,7 @@
     <ClInclude Include="HttpValue.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="RequestType.h" />
+    <ClInclude Include="test-HttpMapBuilder.h" />
     <ClInclude Include="test-HttpRequest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
