@@ -76,7 +76,7 @@ void test_HttpRequest_query_noKeyValueSeperator()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when param has no value - \"?param1\"", &std::cout);
 	assertTrue(!parametersMap.hasKey("param1"), true, "Testing if valueless param1 is absent (not considered a map entry)", &std::cout);
@@ -88,7 +88,7 @@ void test_HttpRequest_query_singleParam_emptyValue()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?param1=\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1"), true, "Testing if empty value param1 is present", &std::cout);
@@ -101,7 +101,7 @@ void test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandAft
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?param1====&\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1==="), true, "Testing if empty value param1 is present (in query \"?param1====&\")", &std::cout);
@@ -114,7 +114,7 @@ void test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandBef
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?&param1====\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1==="), true, "Testing if empty value param1 is present (in query \"?&param1====&\")", &std::cout);
@@ -127,7 +127,7 @@ void test_HttpRequest_query_singleParam_emptyValueAndAmpersand()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?param1=&\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1"), true, "Testing if empty value param1 is present (when there is &)", &std::cout);
@@ -140,7 +140,7 @@ void test_HttpRequest_query_multipleParams_emptyValue()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?param1=&param2=\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1"), true, "Testing first if empty value param1 is present", &std::cout);
@@ -155,7 +155,7 @@ void test_HttpRequest_query_multipleParams_allSeperatorChaos()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"==&param1=&&param2&&&param3=&\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1"), true, "Testing first if empty value param1 is present (when there is &/&&/&&&)", &std::cout);
@@ -172,7 +172,7 @@ void test_HttpRequest_query_multipleParams_emptyValueAndAmpersand()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"?param1=&param2=&\"", &std::cout);
 	assertTrue(parametersMap.hasKey("param1"), true, "Testing first if empty value param1 is present (when there is &)", &std::cout);
@@ -186,7 +186,7 @@ void test_HttpRequest_query_multipleParams()
 	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
-	const HttpMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	HttpValue expectedFirst("value");
 	HttpValue expectedSecond("343");
@@ -206,7 +206,7 @@ void test_HttpRequest_query_multipleParams_ampersandAtEnd()
 	char request[] = "GET /my/path?firstParameter=value&secondParameter=343& HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
-	const HttpMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	HttpValue expectedFirst("value");
 	HttpValue expectedSecond("343");
@@ -226,7 +226,7 @@ void test_HttpRequest_query_multipleParams_multipleSeparator()
 	char request[] = "GET /my/path?firstParameter=value&&&secondParameter=343&& HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
-	const HttpMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	HttpValue expectedFirst("value");
 	HttpValue expectedSecond("343");
@@ -246,7 +246,7 @@ void test_HttpRequest_query_multipleParams_fictionalParameter()
 	char request[] = "GET /my/path?firstParameter=value&secondParameter=343 HTTP/1.1\r\n\r\n";
 
 	HttpRequest httpRequest(request);
-	const HttpMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if request is valid when query is \"/my/path?firstParameter=value&secondParameter=343\" and extra spaces", &std::cout);
 	assertTrue(parameters.getValue("imaginaryParameter").isNull(), true, "Testing absence of imaginaryParameter", &std::cout);
@@ -306,7 +306,7 @@ void test_HttpRequest_headers_singleNonCookie()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if single header request is valid", &std::cout);
 	assertTrue(headers.hasKey("MyHeader"), true, "Testing single header presence", &std::cout);
@@ -319,7 +319,7 @@ void test_HttpRequest_headers_multipleNonCookies()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple header request is valid", &std::cout);
 	assertTrue(headers.hasKey("MyHeader"), true, "Testing first header presence", &std::cout);
@@ -334,7 +334,7 @@ void test_HttpRequest_headers_multipleNonCookies_spaceChaos()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple header request is valid (\"space chaos\")", &std::cout);
 	assertTrue(headers.hasKey("MyHe ader"), true, "Testing first header presence", &std::cout);
@@ -349,7 +349,7 @@ void test_HttpRequest_headers_fictionalNonCookie()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple header request is valid, second time", &std::cout);
 	assertTrue(!headers.hasKey("ThirdHeader"), true, "Testing non-existing header absence", &std::cout);;
@@ -361,7 +361,7 @@ void test_HttpRequest_headers_singleCookie()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if single cookie request is valid", &std::cout);
 	assertTrue(cookies.hasKey("key1"), true, "Testing single cookie presence", &std::cout);
@@ -374,7 +374,7 @@ void test_HttpRequest_headers_singleCookie_emptyValue()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if single cookie request is valid (empty value)", &std::cout);
 	assertTrue(cookies.hasKey("key1"), true, "Testing single cookie presence (empty value)", &std::cout);
@@ -387,7 +387,7 @@ void test_HttpRequest_headers_singleCookie_oneKeyMultipleValues()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if single cookie request is valid (one key two values)", &std::cout);
 	assertTrue(cookies.hasKey("key1=value1"), true, "Testing single cookie presence (one key two values)", &std::cout);
@@ -400,7 +400,7 @@ void test_HttpRequest_headers_singleCookie_oneKeyMultipleValues_extraSeperators(
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if single cookie request is valid (one key two values)", &std::cout);
 	assertTrue(cookies.hasKey("key1====value1=="), true, "Testing single cookie presence (one key two values)", &std::cout);
@@ -413,8 +413,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header)", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header)", &std::cout);
@@ -430,8 +430,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_noValue()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header & no value)", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header & no value)", &std::cout);
@@ -447,8 +447,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparator()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header & no value, no \'=\')", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header & no value, no \'=\')", &std::cout);
@@ -462,8 +462,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparatorAndOn
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header & no value, no \'=\', 1 ok)", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header & no value, no \'=\', 1 ok)", &std::cout);
@@ -478,8 +478,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_extraSpaces()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (same header with extra spaces)", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (same header with extra spaces)", &std::cout);
@@ -495,8 +495,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_spaceInKey()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (space in key)", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (space in key)", &std::cout);
@@ -512,8 +512,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (different header)", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (different header)", &std::cout);
@@ -529,8 +529,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_extraSpaces()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (different header & extra spaces)", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (different header & extra spaces)", &std::cout);
@@ -546,8 +546,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_spacesChaos()
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (\"spaces chaos\")", &std::cout);
 	assertTrue(!headers.hasKey("MyCook ie"), true, "Testing the absence of Cookie header in the header map (\"spaces chaos\")", &std::cout);
@@ -563,8 +563,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_multipleSeparators
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (different header & multiple \';\')", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (different header & multiple \';\')", &std::cout);
@@ -582,8 +582,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparat
 
 	HttpRequest httpRequest(request);
 
-	const HttpMap& cookies = httpRequest.getCookiesMap();
-	const HttpMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (different header & multiple \';\' and \'=\')", &std::cout);
 	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (different header & multiple \';\' and \'=\')", &std::cout);

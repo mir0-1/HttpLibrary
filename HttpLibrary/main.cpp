@@ -1,15 +1,7 @@
-#include "test-HttpMapBuilder.h"
 #include "test-HttpRequest.h"
 
 int main()
 {
-	test_HttpMapBuilder_addSimpleString();
-	test_HttpMapBuilder_addSimpleInteger();
-	test_HttpMapBuilder_addSimpleBool();
-	test_HttpMapBuilder_checkNonExistentIsNull();
-	test_HttpMapBuilder_lockAfterGetContainer();
-	test_HttpMapBuilder_override();
-
 	test_HttpRequest_requestType();
 	test_HttpRequest_requestType_extraSpaces();
 	test_HttpRequest_pathToResource_valid();

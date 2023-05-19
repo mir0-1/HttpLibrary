@@ -1,6 +1,6 @@
 #pragma once
 #include "RequestType.h"
-#include "HttpMapBuilder.h"
+#include "HttpImmutableMap.h"
 #include <iostream>
 
 class HttpRequest
@@ -14,9 +14,14 @@ class HttpRequest
 		RequestType requestType;
 		std::string* pathToResource;
 		double protocolVersion;
-		HttpMapBuilder httpQueryParametersBuilder;
-		HttpMapBuilder httpHeadersBuilder;
-		HttpMapBuilder httpCookiesBuilder;
+
+		HttpMap httpQueryParametersMapInternal;
+		HttpMap httpHeadersMapInternal;
+		HttpMap httpCookiesMapInternal;
+
+		HttpImmutableMap httpQueryParametersMapImmutable;
+		HttpImmutableMap httpHeadersMapImmutable;
+		HttpImmutableMap httpCookiesMapImmutable;
 
 	private:
 		char* parseRequestType(char* src);
@@ -28,16 +33,16 @@ class HttpRequest
 		char* parseHeaderValueNonCookie(char* key, char* value);
 		char* parseHeaderValueCookie(char* value);
 		char* ignoreExtraSpaces(char* src);
-		char* parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceOrNewlineAsLast, HttpMapBuilder& httpMapBuilder);
+		char* parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceOrNewlineAsLast, HttpMap& httpMap);
 
 	public:
 		bool isValid() const;
 		RequestType getRequestType() const;
 		std::string getPathToResource() const;
 		double getProtocolVersion() const;
-		HttpMap& getQueryParametersMap();
-		HttpMap& getHeadersMap();
-		HttpMap& getCookiesMap();
+		HttpImmutableMap& getQueryParametersMap();
+		HttpImmutableMap& getHeadersMap();
+		HttpImmutableMap& getCookiesMap();
 
 		friend std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest);
 

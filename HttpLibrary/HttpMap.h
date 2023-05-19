@@ -12,6 +12,7 @@ class HttpMap
 
 	public:
 		const HttpValue& getValue(const std::string& key) const;
+		void setValue(const std::string& key, const HttpValue& value);
 		bool hasKey(const std::string& key) const;
 
 		friend class HttpMapBuilder;

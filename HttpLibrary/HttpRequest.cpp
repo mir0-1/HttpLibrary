@@ -98,7 +98,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 	else
 		return src++;
 
-	return parseKeyValuePairsCommon(src, '&', true, httpQueryParametersBuilder);
+	return parseKeyValuePairsCommon(src, '&', true, httpQueryParametersMapInternal);
 }
 
 bool HttpRequest::isValid() const
@@ -123,21 +123,20 @@ double HttpRequest::getProtocolVersion() const
 	return protocolVersion;
 }
 
-HttpMap& HttpRequest::getQueryParametersMap()
+HttpImmutableMap& HttpRequest::getQueryParametersMap()
 {
-	return httpQueryParametersBuilder.getContainer();
+	return httpQueryParametersMapImmutable;
 }
 
-HttpMap& HttpRequest::getHeadersMap()
+HttpImmutableMap& HttpRequest::getHeadersMap()
 {
-	return httpHeadersBuilder.getContainer();
+	return httpHeadersMapImmutable;
 }
 
-HttpMap& HttpRequest::getCookiesMap()
+HttpImmutableMap& HttpRequest::getCookiesMap()
 {
-	return httpCookiesBuilder.getContainer();
+	return httpCookiesMapImmutable;
 }
-
 
 char* HttpRequest::validatePreHeaderNewlinePresent(char *src)
 {
@@ -201,7 +200,7 @@ char* HttpRequest::parseHeaderValueNonCookie(char* key, char* value)
 
 	value[i - 1] = '\0';
 	value[i] = '\0';
-	httpHeadersBuilder.setValue(key, HttpValue(value));
+	httpHeadersMapInternal.setValue(key, HttpValue(value));
 	value[i - 1] = '\r';
 	value[i] = '\n';
 
@@ -213,7 +212,7 @@ char* HttpRequest::parseHeaderValueCookie(char* value)
 	if (value == nullptr || *value == '\0')
 		return nullptr;
 
-	return parseKeyValuePairsCommon(value, ';', false, httpCookiesBuilder);
+	return parseKeyValuePairsCommon(value, ';', false, httpCookiesMapInternal);
 }
 
 char* HttpRequest::ignoreExtraSpaces(char* src)
@@ -227,7 +226,7 @@ char* HttpRequest::ignoreExtraSpaces(char* src)
 	return src;
 }
 
-char* HttpRequest::parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceIfTrueElseNewline, HttpMapBuilder& httpMapBuilder)
+char* HttpRequest::parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceIfTrueElseNewline, HttpMap& httpMap)
 {
 	int keyStartIndex = -1;
 	int valueStartIndex = -1;
@@ -269,7 +268,7 @@ char* HttpRequest::parseKeyValuePairsCommon(char* src, char seperator, bool useS
 				if (hasCRbeforeNewline)
 					src[valueEndIndex - 1] = '\0';
 
-				httpMapBuilder.setValue(src + keyStartIndex, HttpValue(src + valueStartIndex));
+				httpMap.setValue(src + keyStartIndex, HttpValue(src + valueStartIndex));
 
 				if (hasCRbeforeNewline)
 					src[valueEndIndex - 1] = '\r';
@@ -290,6 +289,9 @@ char* HttpRequest::parseKeyValuePairsCommon(char* src, char seperator, bool useS
 }
 
 HttpRequest::HttpRequest(char* src)
+	:	httpCookiesMapImmutable(httpCookiesMapInternal),
+		httpHeadersMapImmutable(httpHeadersMapInternal),
+		httpQueryParametersMapImmutable(httpQueryParametersMapInternal)
 {
 	VALIDATE_PTR(src);
 

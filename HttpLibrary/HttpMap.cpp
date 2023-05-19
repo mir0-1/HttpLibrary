@@ -10,6 +10,11 @@ const HttpValue& HttpMap::getValue(const std::string& key) const
 	return nullKey;
 }
 
+void HttpMap::setValue(const std::string& key, const HttpValue& value)
+{
+	keys[key] = value;
+}
+
 bool HttpMap::hasKey(const std::string& key) const
 {
 	return keys.find(key) != keys.end();

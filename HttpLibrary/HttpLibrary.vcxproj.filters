@@ -24,10 +24,13 @@
     <ClCompile Include="HttpMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HttpMapBuilder.cpp">
+    <ClCompile Include="HttpValue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HttpValue.cpp">
+    <ClCompile Include="HttpResponseBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpImmutableMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,13 +50,19 @@
     <ClInclude Include="HttpMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HttpMapBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HttpValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="test-HttpMapBuilder.h">
+    <ClInclude Include="HttpResponseBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpStatusCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpContentType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpImmutableMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
