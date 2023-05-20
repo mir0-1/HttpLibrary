@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <iostream>
+#include <math.h>
 
 #define VALIDATE_PTR(src) if (src == nullptr) return
 
@@ -85,7 +86,7 @@ char* HttpRequest::parseProtocolVersion(char* src)
 	
 	protocolVersion = strtod(&src[versionStartIndex], nullptr);
 
-	if (isnan<double>(protocolVersion))
+	if (isnan(protocolVersion))
 		return nullptr;
 
 	return &src[i];
