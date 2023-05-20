@@ -18,10 +18,12 @@ class HttpRequest
 		HttpMap httpQueryParametersMapInternal;
 		HttpMap httpHeadersMapInternal;
 		HttpMap httpCookiesMapInternal;
+		HttpMap httpBodyParametersMapInternal;
 
 		HttpImmutableMap httpQueryParametersMapImmutable;
 		HttpImmutableMap httpHeadersMapImmutable;
 		HttpImmutableMap httpCookiesMapImmutable;
+		HttpImmutableMap httpBodyParametersMapImmutable;
 
 	private:
 		char* parseRequestType(char* src);
@@ -33,7 +35,8 @@ class HttpRequest
 		char* parseHeaderValueNonCookie(char* key, char* value);
 		char* parseHeaderValueCookie(char* value);
 		char* ignoreExtraSpaces(char* src);
-		char* parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceOrNewlineAsLast, HttpMap& httpMap);
+		char* parseBody(char *src);
+		char* parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceIfTrueElseNewline, HttpMap& httpMap);
 
 	public:
 		bool isValid() const;
@@ -43,6 +46,7 @@ class HttpRequest
 		HttpImmutableMap& getQueryParametersMap();
 		HttpImmutableMap& getHeadersMap();
 		HttpImmutableMap& getCookiesMap();
+		HttpImmutableMap& getBodyParametersMap();
 
 		friend std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest);
 

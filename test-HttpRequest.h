@@ -594,3 +594,96 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparat
 	assertTrue(cookies.hasKey("ThirdCookie==="), true, "Testing third cookie presence (different header)", &std::cout);
 	assertTrue(cookies.getValue("ThirdCookie===").getAsString() == "yetAnotherValue ", true, "Testing third cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
 }
+
+void test_HttpRequest_body_noHeaders()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\n\r\nMyBody=value\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (no headers)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBody"), true, "Testing presence of parameter MyBody (no headers)", &std::cout);
+	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (no headers)", &std::cout);
+}
+
+void test_HttpRequest_body_noHeaders_extraNewlineMissing()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nMyBody=value\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(!httpRequest.isValid(), true, "Testing if request with body is invalid (no headers & extra LF missing)", &std::cout);
+}
+
+void test_HttpRequest_body_singleNonCookie()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nMyHeader: value\r\n\r\nMyBody=value\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (single non-cookie)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBody"), true, "Testing presence of parameter MyBody (single non-cookie)", &std::cout);
+	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (single non-cookie)", &std::cout);
+}
+
+void test_HttpRequest_body_singleCookie()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: key=value\r\n\r\nMyBody=value\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (single cookie)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBody"), true, "Testing presence of parameter MyBody (single cookie)", &std::cout);
+	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (single cookie)", &std::cout);
+}
+
+void test_HttpRequest_body_multipleCookiesSingleHeader()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nCookie: key=value; key2=value2\r\n\r\nMyBody=value\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (multiple cookie single header)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBody"), true, "Testing presence of parameter MyBody (multiple cookie single header)", &std::cout);
+	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (multiple cookie single header)", &std::cout);
+}
+
+void test_HttpRequest_body_noHeaders_multipleParameters()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\n\r\nMyBody=value&AnotherKey=test\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (no headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBody"), true, "Testing presence of parameter MyBody (no headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (no headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.hasKey("AnotherKey"), true, "Testing presence of parameter AnotherKey (no headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.getValue("AnotherKey").getAsString() == "test", true, "Testing AnotherKey value correctness (no headers & multiple params)", &std::cout);
+}
+
+void test_HttpRequest_body_multipleHeaders_multipleParameters()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nFirstHeader: value\r\nSecondHeader: value\r\n\r\nMyBody=value&AnotherKey=test\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (multi headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBody"), true, "Testing presence of parameter MyBody (multi headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (multi headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.hasKey("AnotherKey"), true, "Testing presence of parameter AnotherKey (multi headers & multiple params)", &std::cout);
+	assertTrue(bodyParams.getValue("AnotherKey").getAsString() == "test", true, "Testing AnotherKey value correctness (multi headers & multiple params)", &std::cout);
+}

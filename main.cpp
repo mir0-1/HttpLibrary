@@ -45,6 +45,13 @@ int main()
 	test_HttpRequest_headers_multipleCookies_differentHeader_spacesChaos();
 	test_HttpRequest_headers_multipleCookies_differentHeader_multipleSeparators();
 	test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparators();
+	test_HttpRequest_body_noHeaders();
+	test_HttpRequest_body_noHeaders_extraNewlineMissing();
+	test_HttpRequest_body_singleNonCookie();
+	test_HttpRequest_body_singleCookie();
+	test_HttpRequest_body_multipleCookiesSingleHeader();
+	test_HttpRequest_body_noHeaders_multipleParameters();
+	test_HttpRequest_body_multipleHeaders_multipleParameters();
 
 	return 0;
 }

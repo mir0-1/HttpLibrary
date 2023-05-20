@@ -1,7 +1,7 @@
 all: remote
 
 OUTPUT_NAME=httplib.out
-COMPILER=g++
+COMPILER=g++ -g
 CONFIG=
 BUILD=$(COMPILER) $^ $(CONFIG) -o $(OUTPUT_NAME)
 

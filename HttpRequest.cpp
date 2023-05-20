@@ -63,7 +63,7 @@ char* HttpRequest::parseProtocolVersion(char* src)
 	bool matchFlag = true;
 	int versionStartIndex = -1;
 	int i, j;
-	for (i = 0, j = 0; src[i] && src[i] != '\r' && matchFlag; i++)
+	for (i = 0, j = 0; src[i] && src[i] != '\n' && matchFlag; i++)
 	{
 		if (commonProtocolSubstring[j] && src[i] != commonProtocolSubstring[j])
 		{
@@ -97,7 +97,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 	if (*src == '?')
 		src++;
 	else
-		return src++;
+		return src + 1;
 
 	return parseKeyValuePairsCommon(src, '&', true, httpQueryParametersMapInternal);
 }
@@ -139,6 +139,11 @@ HttpImmutableMap& HttpRequest::getCookiesMap()
 	return httpCookiesMapImmutable;
 }
 
+HttpImmutableMap& HttpRequest::getBodyParametersMap()
+{
+	return httpBodyParametersMapImmutable;
+}
+
 char* HttpRequest::validateNewlinePresent(char *src)
 {
 	if (*src != '\n')
@@ -153,12 +158,12 @@ char* HttpRequest::parseHeaders(char* src)
 	if (src == nullptr || *src == '\0')
 		return nullptr;
 
-	if (*src == '\n')
-		return src += 1;
-
 	do
 	{
 		src = ignoreExtraSpaces(src);
+
+		if (*src == '\n')
+			return src + 1;
 
 		int i;
 		int startIndex = 0;
@@ -179,7 +184,7 @@ char* HttpRequest::parseHeaders(char* src)
 			src = parseHeaderValueNonCookie(src, value);
 
 		*colonCharAddress = ':';
-	} while (src && *src);
+	} while (src && *src && *src != '\n');
 
 	return src;
 }
@@ -191,18 +196,18 @@ char* HttpRequest::parseHeaderValueNonCookie(char* key, char* value)
 
 	int i;
 
-	for (i = 0; value[i] && value[i] != '\r'; i++);
-	if (value[i] != '\r')
-		return nullptr;
-
-	i++;
+	for (i = 0; value[i] && value[i] != '\n'; i++);
 	if (value[i] != '\n')
 		return nullptr;
 
-	value[i - 1] = '\0';
+	bool hasCRbeforeNewline = (i > 0) && (value[i-1] == '\r');
+
+	if (hasCRbeforeNewline)
+		value[i - 1] = '\0';
 	value[i] = '\0';
 	httpHeadersMapInternal.setValue(key, HttpValue(value));
-	value[i - 1] = '\r';
+	if (hasCRbeforeNewline)
+		value[i - 1] = '\r';
 	value[i] = '\n';
 
 	return &value[i+1];
@@ -214,6 +219,18 @@ char* HttpRequest::parseHeaderValueCookie(char* value)
 		return nullptr;
 
 	return parseKeyValuePairsCommon(value, ';', false, httpCookiesMapInternal);
+}
+
+char* HttpRequest::parseBody(char *src)
+{
+	if (src == nullptr)
+		return nullptr;
+
+	if (*src == '\0')
+		return src+1;
+
+	return parseKeyValuePairsCommon(src, '&', false, httpBodyParametersMapInternal);
+
 }
 
 char* HttpRequest::ignoreExtraSpaces(char* src)
@@ -292,12 +309,12 @@ char* HttpRequest::parseKeyValuePairsCommon(char* src, char seperator, bool useS
 HttpRequest::HttpRequest(char* src)
 	:	httpCookiesMapImmutable(httpCookiesMapInternal),
 		httpHeadersMapImmutable(httpHeadersMapInternal),
-		httpQueryParametersMapImmutable(httpQueryParametersMapInternal)
+		httpQueryParametersMapImmutable(httpQueryParametersMapInternal),
+		httpBodyParametersMapImmutable(httpBodyParametersMapInternal)
 {
 	valid = false;
 	protocolVersion = 0.0;
 	
-
 	VALIDATE_PTR(src);
 
 	src = parseRequestType(src);
@@ -322,7 +339,9 @@ HttpRequest::HttpRequest(char* src)
 	src = parseHeaders(src);
 	VALIDATE_PTR(src);
 
-
+	src = ignoreExtraSpaces(src);
+	src = parseBody(src);
+	VALIDATE_PTR(src);
 
 	valid = true;
 }
