@@ -28,7 +28,7 @@ class HttpRequest
 		char* copyPathToResource(char* src);
 		char* parseProtocolVersion(char* src);
 		char* parseParametersFromResourcePath(char* src);
-		char* validatePreHeaderNewlinePresent(char* src);
+		char* validateNewlinePresent(char* src);
 		char* parseHeaders(char* src);
 		char* parseHeaderValueNonCookie(char* key, char* value);
 		char* parseHeaderValueCookie(char* value);

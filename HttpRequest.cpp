@@ -139,7 +139,7 @@ HttpImmutableMap& HttpRequest::getCookiesMap()
 	return httpCookiesMapImmutable;
 }
 
-char* HttpRequest::validatePreHeaderNewlinePresent(char *src)
+char* HttpRequest::validateNewlinePresent(char *src)
 {
 	if (*src != '\n')
 		return nullptr;
@@ -315,12 +315,14 @@ HttpRequest::HttpRequest(char* src)
 	VALIDATE_PTR(src);
 
 	src = ignoreExtraSpaces(src);
-	src = validatePreHeaderNewlinePresent(src);
+	src = validateNewlinePresent(src);
 	VALIDATE_PTR(src);
 
 	src = ignoreExtraSpaces(src);
 	src = parseHeaders(src);
 	VALIDATE_PTR(src);
+
+
 
 	valid = true;
 }
