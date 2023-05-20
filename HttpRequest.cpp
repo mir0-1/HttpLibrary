@@ -294,6 +294,10 @@ HttpRequest::HttpRequest(char* src)
 		httpHeadersMapImmutable(httpHeadersMapInternal),
 		httpQueryParametersMapImmutable(httpQueryParametersMapInternal)
 {
+	valid = false;
+	protocolVersion = 0.0;
+	
+
 	VALIDATE_PTR(src);
 
 	src = parseRequestType(src);
