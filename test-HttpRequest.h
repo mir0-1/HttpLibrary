@@ -595,6 +595,25 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparat
 	assertTrue(cookies.getValue("ThirdCookie===").getAsString() == "yetAnotherValue ", true, "Testing third cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
 }
 
+void test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparators_missingCRs()
+{
+	char request[] = "GET /my/path HTTP/1.1\nCookie:MyCookie===;;;SecondCookie==value;;\n  Cookie:;ThirdCookie====yetAnotherValue ;\nSecondHeader: anotherValue  \n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if multiple cookie request is valid (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(!headers.hasKey("Cookie"), true, "Testing the absence of Cookie header in the header map (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(cookies.hasKey("MyCookie=="), true, "Testing first cookie presence (different header & multiple \';\')", &std::cout);
+	assertTrue(cookies.getValue("MyCookie==").getAsString() == "", true, "Testing first cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(cookies.hasKey("SecondCookie="), true, "Testing second cookie presence (different header)", &std::cout);
+	assertTrue(cookies.getValue("SecondCookie=").getAsString() == "value", true, "Testing second cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
+	assertTrue(cookies.hasKey("ThirdCookie==="), true, "Testing third cookie presence (different header)", &std::cout);
+	assertTrue(cookies.getValue("ThirdCookie===").getAsString() == "yetAnotherValue ", true, "Testing third cookie value correctness (different header & multiple \';\' and \'=\')", &std::cout);
+}
+
 void test_HttpRequest_body_noHeaders()
 {
 	char request[] = "GET /my/path HTTP/1.1\r\n\r\nMyBody=value\r\n";
@@ -686,4 +705,97 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters()
 	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (multi headers & multiple params)", &std::cout);
 	assertTrue(bodyParams.hasKey("AnotherKey"), true, "Testing presence of parameter AnotherKey (multi headers & multiple params)", &std::cout);
 	assertTrue(bodyParams.getValue("AnotherKey").getAsString() == "test", true, "Testing AnotherKey value correctness (multi headers & multiple params)", &std::cout);
+}
+
+void test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nFir st Hea der:va lue\r\nSeco ndHea der : va lue\r\n\r\nMyB od y=va lu e&Anothe rKe y=te st \r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (multi headers & multiple params, \"space chaos\")", &std::cout);
+	assertTrue(bodyParams.hasKey("MyB od y"), true, "Testing presence of parameter MyBody (multi headers & multiple params, \"space chaos\")", &std::cout);
+	assertTrue(bodyParams.getValue("MyB od y").getAsString() == "va lu e", true, "Testing MyBody value correctness (multi headers & multiple params, \"space chaos\")", &std::cout);
+	assertTrue(bodyParams.hasKey("Anothe rKe y"), true, "Testing presence of parameter AnotherKey (multi headers & multiple params, \"space chaos\")", &std::cout);
+	assertTrue(bodyParams.getValue("Anothe rKe y").getAsString() == "te st ", true, "Testing AnotherKey value correctness (multi headers & multiple params, \"space chaos\")", &std::cout);
+}
+
+void test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos_missingCRs()
+{
+	char request[] = "GET /my/path HTTP/1.1\nFir st Hea der:va lue\nSeco ndHea der : va lue\n\nMyB od y=va lu e&Anothe rKe y=te st \n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (multi headers & multiple params, \"space chaos\", no \\r)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyB od y"), true, "Testing presence of parameter MyBody (multi headers & multiple params, \"space chaos\", no \\r)", &std::cout);
+	assertTrue(bodyParams.getValue("MyB od y").getAsString() == "va lu e", true, "Testing MyBody value correctness (multi headers & multiple params, \"space chaos\", no \\r)", &std::cout);
+	assertTrue(bodyParams.hasKey("Anothe rKe y"), true, "Testing presence of parameter AnotherKey (multi headers & multiple params, \"space chaos\", no \\r)", &std::cout);
+	assertTrue(bodyParams.getValue("Anothe rKe y").getAsString() == "te st ", true, "Testing AnotherKey value correctness (multi headers & multiple params, \"space chaos\", no \\r)", &std::cout);
+}
+
+void test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos_missingCRs_extraSeparators()
+{
+	char request[] = "GET /my/path HTTP/1.1\nFir st Hea der:va lue\nSeco ndHea der : va lue\n\n&&MyB od y=va lu e&&&Anothe rKe y=te st &&\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (multi headers & multiple params, \"space chaos\", no \\r, more \'&\'')", &std::cout);
+	assertTrue(bodyParams.hasKey("MyB od y"), true, "Testing presence of parameter MyBody (multi headers & multiple params, \"space chaos\", no \\r, more \'&\'')", &std::cout);
+	assertTrue(bodyParams.getValue("MyB od y").getAsString() == "va lu e", true, "Testing MyBody value correctness (multi headers & multiple params, \"space chaos\", no \\r, , more \'&\')", &std::cout);
+	assertTrue(bodyParams.hasKey("Anothe rKe y"), true, "Testing presence of parameter AnotherKey (multi headers & multiple params, \"space chaos\", no \\r, , more \'&\')", &std::cout);
+	assertTrue(bodyParams.getValue("Anothe rKe y").getAsString() == "te st ", true, "Testing AnotherKey value correctness (multi headers & multiple params, \"space chaos\", no \\r, more \'&\')", &std::cout);
+}
+
+void test_HttpRequest_body_multipleHeaders_multipleParameters_noValue()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nFirstHeader: value\r\nSecondHeader: value\r\n\r\nMyBody=value&keywnovalue&AnotherKey=test\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (param /w no value)", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBody"), true, "Testing presence of parameter MyBody (param /w no value)", &std::cout);
+	assertTrue(!bodyParams.hasKey("keywnovalue"), true, "Testing absence of parameter keywnovalue (has no value)(param /w no value)", &std::cout);
+	assertTrue(bodyParams.getValue("MyBody").getAsString() == "value", true, "Testing MyBody value correctness (param /w no value)", &std::cout);
+	assertTrue(bodyParams.hasKey("AnotherKey"), true, "Testing presence of parameter AnotherKey (param /w no value)", &std::cout);
+	assertTrue(bodyParams.getValue("AnotherKey").getAsString() == "test", true, "Testing AnotherKey value correctness (param /w no value)", &std::cout);
+}
+
+void test_HttpRequest_body_multipleHeaders_multipleParameters_noValue_spacesChaos_extraSeparators()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nFirstHeader: value\r\nSecon dHe ader: v alu e\r\n\r\n&&&&MyBod y=v alue&&&keywno val ue&&&AnotherK ey=t est&\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (param /w no value, \"space chaos\", \'&\'')", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBod y"), true, "Testing presence of parameter MyBody (param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(!bodyParams.hasKey("keywno val ue"), true, "Testing absence of parameter keywnovalue (has no value)(param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(bodyParams.getValue("MyBod y").getAsString() == "v alue", true, "Testing MyBody value correctness (param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(bodyParams.hasKey("AnotherK ey"), true, "Testing presence of parameter AnotherKey (param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(bodyParams.getValue("AnotherK ey").getAsString() == "t est", true, "Testing AnotherKey value correctness (param /w no value, \"space chaos\", \'&\')", &std::cout);
+}
+
+oid test_HttpRequest_body_multipleHeaders_multipleParameters_keyWithEmptyValue_extraSeparators()
+{
+	char request[] = "GET /my/path HTTP/1.1\r\nFirstHeader: value\r\nSecon dHe ader: v alu e\r\n\r\n&&&&somekey=\r\n";
+
+	HttpRequest httpRequest(request);
+
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+
+	assertTrue(httpRequest.isValid(), true, "Testing if request with body is valid (param /w no value, \"space chaos\", \'&\'')", &std::cout);
+	assertTrue(bodyParams.hasKey("MyBod y"), true, "Testing presence of parameter MyBody (param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(!bodyParams.hasKey("keywno val ue"), true, "Testing absence of parameter keywnovalue (has no value)(param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(bodyParams.getValue("MyBod y").getAsString() == "v alue", true, "Testing MyBody value correctness (param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(bodyParams.hasKey("AnotherK ey"), true, "Testing presence of parameter AnotherKey (param /w no value, \"space chaos\", \'&\')", &std::cout);
+	assertTrue(bodyParams.getValue("AnotherK ey").getAsString() == "t est", true, "Testing AnotherKey value correctness (param /w no value, \"space chaos\", \'&\')", &std::cout);
 }

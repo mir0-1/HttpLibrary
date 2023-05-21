@@ -184,7 +184,7 @@ char* HttpRequest::parseHeaders(char* src)
 			src = parseHeaderValueNonCookie(src, value);
 
 		*colonCharAddress = ':';
-	} while (src && *src && *src != '\n');
+	} while (src && *src);
 
 	return src;
 }

@@ -45,6 +45,7 @@ int main()
 	test_HttpRequest_headers_multipleCookies_differentHeader_spacesChaos();
 	test_HttpRequest_headers_multipleCookies_differentHeader_multipleSeparators();
 	test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparators();
+	test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparators_missingCRs();
 	test_HttpRequest_body_noHeaders();
 	test_HttpRequest_body_noHeaders_extraNewlineMissing();
 	test_HttpRequest_body_singleNonCookie();
@@ -52,6 +53,11 @@ int main()
 	test_HttpRequest_body_multipleCookiesSingleHeader();
 	test_HttpRequest_body_noHeaders_multipleParameters();
 	test_HttpRequest_body_multipleHeaders_multipleParameters();
+	test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos();
+	test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos_missingCRs();
+	test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos_missingCRs_extraSeparators();
+	test_HttpRequest_body_multipleHeaders_multipleParameters_noValue();
+	test_HttpRequest_body_multipleHeaders_multipleParameters_noValue_spacesChaos_extraSeparators();
 
 	return 0;
 }
