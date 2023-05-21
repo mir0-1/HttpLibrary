@@ -784,7 +784,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters_noValue_spacesChao
 	assertTrue(bodyParams.getValue("AnotherK ey").getAsString() == "t est", true, "Testing AnotherKey value correctness (param /w no value, \"space chaos\", \'&\')", &std::cout);
 }
 
-oid test_HttpRequest_body_multipleHeaders_multipleParameters_keyWithEmptyValue_extraSeparators()
+void test_HttpRequest_body_multipleHeaders_multipleParameters_keyWithEmptyValue_extraSeparators()
 {
 	char request[] = "GET /my/path HTTP/1.1\r\nFirstHeader: value\r\nSecon dHe ader: v alu e\r\n\r\n&&&&somekey=\r\n";
 
