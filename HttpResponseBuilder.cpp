@@ -1,10 +1,37 @@
 #include "HttpResponseBuilder.h"
 
 HttpResponseBuilder::HttpResponseBuilder() 
-	:	output(128, '\0'),
-		body(256, '\0')
 {
-	
+	overallValid = false;
+	responseCodeValid = false;
+	cookieMap = nullptr;
+	headerMap = nullptr;
+	jsonMap = nullptr;
+}
+
+const char* HttpResponseBuilder::mapStatusCode()
+{
+	switch(statusCode)
+	{
+		case HttpStatusCode::OK:
+			responseCodeValid = true;
+			return "200 OK";
+		case HttpStatusCode::BAD_REQUEST:
+			responseCodeValid = true;
+			return "400 Bad Request";
+		case HttpStatusCode::NOT_FOUND:
+			responseCodeValid = true;
+			return "404 Not Found";
+		case HttpStatusCode::UNAUTHORIZED:
+			responseCodeValid = true;
+			return "401 Unauthorized";
+		case HttpStatusCode::TOO_MANY_REQUESTS:
+			responseCodeValid = true;
+			return "429 Too Many Requests";
+	}
+
+	responseCodeValid = false;
+	return "500 Internal Server Error";
 }
 
 HttpResponseBuilder& HttpResponseBuilder::setStatusCode(HttpStatusCode code)
@@ -19,19 +46,19 @@ HttpResponseBuilder& HttpResponseBuilder::setProtocolVersion(double protocolVers
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(HttpMap* headerMap)
+HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(HttpImmutableMap* headerMap)
 {
 	this->headerMap = headerMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setCookieMap(HttpMap* cookieMap)
+HttpResponseBuilder& HttpResponseBuilder::setCookieMap(HttpImmutableMap* cookieMap)
 {
 	this->cookieMap = cookieMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setJsonMap(HttpMap* jsonMap)
+HttpResponseBuilder& HttpResponseBuilder::setJsonMap(HttpImmutableMap* jsonMap)
 {
 	this->jsonMap = jsonMap;
 	return *this;
@@ -51,5 +78,16 @@ HttpResponseBuilder& HttpResponseBuilder::setContentType(const std::string& cont
 
 HttpResponseBuilder& HttpResponseBuilder::setContentType(HttpContentType contentType)
 {
-	return *this;
+	if (contentType == HttpContentType::JSON)
+		return setContentType("application/json");
+
+	return setContentType("text/html");
+}
+
+std::string& HttpResponseBuilder::build()
+{
+	body.clear();
+	body.append("HTTP/1.1 ");
+	body.append(mapStatusCode());
+	body.append("\r\n");
 }

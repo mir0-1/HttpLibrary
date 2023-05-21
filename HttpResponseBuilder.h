@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "HttpStatusCode.h"
-#include "HttpMap.h"
+#include "HttpImmutableMap.h"
 #include "HttpContentType.h"
 
 class HttpResponseBuilder
@@ -12,20 +12,25 @@ class HttpResponseBuilder
 		std::string contentType;
 		HttpStatusCode statusCode;
 		double protocolVersion;
+		bool overallValid;
+		bool responseCodeValid;
 
-		HttpMap* headerMap;
-		HttpMap* cookieMap;
-		HttpMap* jsonMap;
+		HttpImmutableMap* headerMap;
+		HttpImmutableMap* cookieMap;
+		HttpImmutableMap* jsonMap;
+
+		const char* mapStatusCode();
 
 	public:
 		HttpResponseBuilder();
 
 		HttpResponseBuilder& setStatusCode(HttpStatusCode code);
 		HttpResponseBuilder& setProtocolVersion(double protocolVersion);
-		HttpResponseBuilder& setHeaderMap(HttpMap* headerMap);
-		HttpResponseBuilder& setCookieMap(HttpMap* cookieMap);
-		HttpResponseBuilder& setJsonMap(HttpMap* jsonMap);
+		HttpResponseBuilder& setHeaderMap(HttpImmutableMap* headerMap);
+		HttpResponseBuilder& setCookieMap(HttpImmutableMap* cookieMap);
+		HttpResponseBuilder& setJsonMap(HttpImmutableMap* jsonMap);
 		HttpResponseBuilder& setRawBody(const std::string& body);
 		HttpResponseBuilder& setContentType(const std::string& contentType);
 		HttpResponseBuilder& setContentType(HttpContentType contentType);
+		std::string& build();
 };
