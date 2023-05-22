@@ -72,6 +72,10 @@ int main()
 	test_HttpResponseBuilder_noHeaders_helloWorldHtml();
 	test_HttpResponseBuilder_someHeaders_helloWorldHtml();
 	test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml();
+	test_HttpResponseBuilder_someHeaders_someCookies_jsonBody();
+	test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes();
+	test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaHeaderMap();
+	test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter();
 
 	return 0;
 }

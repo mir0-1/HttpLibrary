@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include "HttpStatusCode.h"
 #include "HttpIterableMap.h"
 #include "HttpContentType.h"
@@ -18,6 +19,11 @@ class HttpResponseBuilder
 		HttpIterableMap* jsonMap;
 
 		const char* mapStatusCode();
+		void buildContentTypeAuto();
+		void buildHeaders();
+		void buildCookies();
+		void buildContentLengthAuto();
+		void buildJsonBody();
 
 	public:
 		HttpResponseBuilder();
