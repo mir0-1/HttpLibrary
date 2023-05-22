@@ -39,19 +39,19 @@ HttpResponseBuilder& HttpResponseBuilder::setProtocolVersion(double protocolVers
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(HttpIterableMap* headerMap)
+HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(CommonIterableMap* headerMap)
 {
 	this->headerMap = headerMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setCookieMap(HttpIterableMap* cookieMap)
+HttpResponseBuilder& HttpResponseBuilder::setCookieMap(CommonIterableMap* cookieMap)
 {
 	this->cookieMap = cookieMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setJsonMap(HttpIterableMap* jsonMap)
+HttpResponseBuilder& HttpResponseBuilder::setJsonMap(CommonIterableMap* jsonMap)
 {
 	this->jsonMap = jsonMap;
 	return *this;
@@ -90,7 +90,7 @@ void HttpResponseBuilder::buildHeaders()
 
 	while (!headerMap->isIteratorAtEnd())
 	{
-		std::pair<std::string, HttpValue> header = headerMap->getNextPairFromIterator();
+		std::pair<std::string, ValueWrapper> header = headerMap->getNextPairFromIterator();
 		output.append(header.first);
 		output.append(": ");
 		output.append(header.second.getAsString());
@@ -108,7 +108,7 @@ void HttpResponseBuilder::buildCookies()
 	while (!cookieMap->isIteratorAtEnd())
 	{
 		output.append("Set-Cookie: ");
-		std::pair<std::string, HttpValue> cookie = cookieMap->getNextPairFromIterator();
+		std::pair<std::string, ValueWrapper> cookie = cookieMap->getNextPairFromIterator();
 		output.append(cookie.first);
 		output.append("=");
 		output.append(cookie.second.getAsString());
@@ -135,7 +135,7 @@ void HttpResponseBuilder::buildJsonBody()
 	jsonMap->resetIterator();
 	while (!jsonMap->isIteratorAtEnd())
 	{
-		std::pair<std::string, HttpValue> jsonPair = jsonMap->getNextPairFromIterator();
+		std::pair<std::string, ValueWrapper> jsonPair = jsonMap->getNextPairFromIterator();
 		body.append("\t");
 		body.append(jsonPair.first);
 		body.append(": \"");

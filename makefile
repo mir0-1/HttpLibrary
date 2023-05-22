@@ -5,11 +5,11 @@ COMPILER=g++ -std=c++11
 CONFIG=
 BUILD=$(COMPILER) $^ $(CONFIG) -o $(OUTPUT_NAME)
 
-local: *.cpp
+local: src/*.cpp ../SimpleKeyValueParseLib/src/*.cpp test/*.cpp
 		make clean
 		$(BUILD)
 
-remote: *.cpp
+remote: src/*.cpp ../SimpleKeyValueParseLib/src/*.cpp test/*.cpp
 		make clean
 		git pull
 		$(BUILD)

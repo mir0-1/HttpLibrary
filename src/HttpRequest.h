@@ -1,6 +1,6 @@
 #pragma once
 #include "RequestType.h"
-#include "HttpImmutableMap.h"
+#include "../../SimpleKeyValueParseLib/src/CommonImmutableMap.h"
 #include <iostream>
 
 class HttpRequest
@@ -15,15 +15,15 @@ class HttpRequest
 		std::string* pathToResource;
 		double protocolVersion;
 
-		HttpMap httpQueryParametersMapInternal;
-		HttpMap httpHeadersMapInternal;
-		HttpMap httpCookiesMapInternal;
-		HttpMap httpBodyParametersMapInternal;
+		CommonMutableMap queryParametersMapInternal;
+		CommonMutableMap headersMapInternal;
+		CommonMutableMap cookiesMapInternal;
+		CommonMutableMap bodyParametersMapInternal;
 
-		HttpImmutableMap httpQueryParametersMapImmutable;
-		HttpImmutableMap httpHeadersMapImmutable;
-		HttpImmutableMap httpCookiesMapImmutable;
-		HttpImmutableMap httpBodyParametersMapImmutable;
+		CommonImmutableMap queryParametersMapImmutable;
+		CommonImmutableMap headersMapImmutable;
+		CommonImmutableMap cookiesMapImmutable;
+		CommonImmutableMap bodyParametersMapImmutable;
 
 	private:
 		char* parseRequestType(char* src);
@@ -36,19 +36,16 @@ class HttpRequest
 		char* parseHeaderValueCookie(char* value);
 		char* ignoreExtraSpaces(char* src);
 		char* parseBody(char *src);
-		char* parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceIfTrueElseNewline, HttpMap& httpMap);
 
 	public:
 		bool isValid() const;
 		RequestType getRequestType() const;
 		std::string getPathToResource() const;
 		double getProtocolVersion() const;
-		HttpImmutableMap& getQueryParametersMap();
-		HttpImmutableMap& getHeadersMap();
-		HttpImmutableMap& getCookiesMap();
-		HttpImmutableMap& getBodyParametersMap();
-
-		friend std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest);
+		CommonImmutableMap& getQueryParametersMap();
+		CommonImmutableMap& getHeadersMap();
+		CommonImmutableMap& getCookiesMap();
+		CommonImmutableMap& getBodyParametersMap();
 
 		HttpRequest(char* src);
 };

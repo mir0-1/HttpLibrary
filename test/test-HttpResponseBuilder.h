@@ -1,5 +1,5 @@
-#include "HttpResponseBuilder.h"
-#include "assert.h"
+#include "../src/HttpResponseBuilder.h"
+#include "../../SimpleTestingLibrary/assert.h"
 #include "test-configuration.h"
 
 void printResponse(const std::string& response, std::ostream* log)
@@ -11,10 +11,10 @@ void printResponse(const std::string& response, std::ostream* log)
 	}
 }
 
-void initSomeHeadersCommon(HttpMap &headers)
+void initSomeHeadersCommon(CommonMutableMap &headers)
 {
-	headers.setValue("MyCustomHeader", HttpValue("customVal"));
-	headers.setValue("Another", HttpValue("sth-else"));
+	headers.setValue("MyCustomHeader", ValueWrapper("customVal"));
+	headers.setValue("Another", ValueWrapper("sth-else"));
 }
 
 void test_HttpResponseBuilder_noHeaders_noBody()
@@ -50,7 +50,7 @@ void test_HttpResponseBuilder_noHeaders_helloWorldHtml()
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	HttpMap headers;
+	CommonMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -70,7 +70,7 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
 void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	HttpMap headers;
+	CommonMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -91,7 +91,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	HttpMap headers;
+	CommonMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -111,12 +111,12 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	HttpMap headers, jsonMap;
+	CommonMutableMap headers, jsonMap;
 
 	initSomeHeadersCommon(headers);
 
-	jsonMap.setValue("Var1", HttpValue("random"));
-	jsonMap.setValue("jsonvar2two", HttpValue("\"I quoted somebody\", said jsonvar2two"));
+	jsonMap.setValue("Var1", ValueWrapper("random"));
+	jsonMap.setValue("jsonvar2two", ValueWrapper("\"I quoted somebody\", said jsonvar2two"));
 
 	std::string result = httpResponseBuilder
 		.setProtocolVersion(1.1)
@@ -134,10 +134,10 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaHeaderMap()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	HttpMap headers;
+	CommonMutableMap headers;
 
 	initSomeHeadersCommon(headers);
-	headers.setValue("Content-Type", HttpValue("custom"));
+	headers.setValue("Content-Type", ValueWrapper("custom"));
 
 	std::string result = httpResponseBuilder
 		.setProtocolVersion(1.1)
@@ -155,7 +155,7 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaH
 void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	HttpMap headers;
+	CommonMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -176,11 +176,11 @@ void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter(
 void test_HttpResponseBuilder_someHeaders_noCookies_htmlBody_overrideContentLength()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	HttpMap headers;
+	CommonMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
-	headers.setValue("Content-Length", HttpValue("1337"));
+	headers.setValue("Content-Length", ValueWrapper("1337"));
 
 	std::string result = httpResponseBuilder
 		.setProtocolVersion(1.1)

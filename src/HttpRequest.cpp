@@ -99,7 +99,7 @@ char* HttpRequest::parseParametersFromResourcePath(char* src)
 	else
 		return src + 1;
 
-	return parseKeyValuePairsCommon(src, '&', true, httpQueryParametersMapInternal);
+	return queryParametersMapInternal.parseKeyValuePairs(src, '&', ' ');
 }
 
 bool HttpRequest::isValid() const
@@ -124,24 +124,24 @@ double HttpRequest::getProtocolVersion() const
 	return protocolVersion;
 }
 
-HttpImmutableMap& HttpRequest::getQueryParametersMap()
+CommonImmutableMap& HttpRequest::getQueryParametersMap()
 {
-	return httpQueryParametersMapImmutable;
+	return queryParametersMapImmutable;
 }
 
-HttpImmutableMap& HttpRequest::getHeadersMap()
+CommonImmutableMap& HttpRequest::getHeadersMap()
 {
-	return httpHeadersMapImmutable;
+	return headersMapImmutable;
 }
 
-HttpImmutableMap& HttpRequest::getCookiesMap()
+CommonImmutableMap& HttpRequest::getCookiesMap()
 {
-	return httpCookiesMapImmutable;
+	return cookiesMapImmutable;
 }
 
-HttpImmutableMap& HttpRequest::getBodyParametersMap()
+CommonImmutableMap& HttpRequest::getBodyParametersMap()
 {
-	return httpBodyParametersMapImmutable;
+	return bodyParametersMapImmutable;
 }
 
 char* HttpRequest::validateNewlinePresent(char *src)
@@ -205,7 +205,7 @@ char* HttpRequest::parseHeaderValueNonCookie(char* key, char* value)
 	if (hasCRbeforeNewline)
 		value[i - 1] = '\0';
 	value[i] = '\0';
-	httpHeadersMapInternal.setValue(key, HttpValue(value));
+	headersMapInternal.setValue(key, ValueWrapper(value));
 	if (hasCRbeforeNewline)
 		value[i - 1] = '\r';
 	value[i] = '\n';
@@ -218,7 +218,7 @@ char* HttpRequest::parseHeaderValueCookie(char* value)
 	if (value == nullptr || *value == '\0')
 		return nullptr;
 
-	return parseKeyValuePairsCommon(value, ';', false, httpCookiesMapInternal);
+	return cookiesMapInternal.parseKeyValuePairs(value, ';', '\n');
 }
 
 char* HttpRequest::parseBody(char *src)
@@ -229,7 +229,7 @@ char* HttpRequest::parseBody(char *src)
 	if (*src == '\0')
 		return src+1;
 
-	return parseKeyValuePairsCommon(src, '&', false, httpBodyParametersMapInternal);
+	return bodyParametersMapInternal.parseKeyValuePairs(src, '&', '\0');
 
 }
 
@@ -244,73 +244,11 @@ char* HttpRequest::ignoreExtraSpaces(char* src)
 	return src;
 }
 
-char* HttpRequest::parseKeyValuePairsCommon(char* src, char seperator, bool useSpaceIfTrueElseNewline, HttpMap& httpMap)
-{
-	int keyStartIndex = -1;
-	int valueStartIndex = -1;
-	bool isLast = false;
-
-	int i;
-	for (i = 0; ; i++)
-	{
-		if (!useSpaceIfTrueElseNewline && valueStartIndex == -1 && src[i] != '\n' && isspace(src[i]))
-			continue;
-		
-		if (keyStartIndex == -1)
-			keyStartIndex = i;
-
-		if (src[i] == '\0')
-			return nullptr;
-
-		if (src[i] == '=')
-		{
-			valueStartIndex = i + 1;
-			continue;
-		}
-
-		isLast = useSpaceIfTrueElseNewline ? isspace(src[i]) : (src[i] == '\n');
-		if (src[i] == seperator || isLast)
-		{
-			if (valueStartIndex != -1)
-			{
-				int keyEndIndex = valueStartIndex - 1;
-				int valueEndIndex = i;
-
-				char tempKeyChar = src[keyEndIndex];
-				char tempValueChar = src[valueEndIndex];
-
-				src[keyEndIndex] = '\0';
-				src[valueEndIndex] = '\0';
-
-				bool hasCRbeforeNewline = !useSpaceIfTrueElseNewline && isLast && valueEndIndex >= 1 && src[valueEndIndex - 1] == '\r';
-				if (hasCRbeforeNewline)
-					src[valueEndIndex - 1] = '\0';
-
-				httpMap.setValue(src + keyStartIndex, HttpValue(src + valueStartIndex));
-
-				if (hasCRbeforeNewline)
-					src[valueEndIndex - 1] = '\r';
-
-				src[keyEndIndex] = tempKeyChar;
-				src[valueEndIndex] = tempValueChar;
-			}
-
-			keyStartIndex = -1;
-			valueStartIndex = -1;
-		}
-
-		if (isLast)
-			break;
-	}
-
-	return src + i + 1;
-}
-
 HttpRequest::HttpRequest(char* src)
-	:	httpCookiesMapImmutable(httpCookiesMapInternal),
-		httpHeadersMapImmutable(httpHeadersMapInternal),
-		httpQueryParametersMapImmutable(httpQueryParametersMapInternal),
-		httpBodyParametersMapImmutable(httpBodyParametersMapInternal)
+	:	cookiesMapImmutable(cookiesMapInternal),
+		headersMapImmutable(headersMapInternal),
+		queryParametersMapImmutable(queryParametersMapInternal),
+		bodyParametersMapImmutable(bodyParametersMapInternal)
 {
 	valid = false;
 	protocolVersion = 0.0;
@@ -344,14 +282,4 @@ HttpRequest::HttpRequest(char* src)
 	VALIDATE_PTR(src);
 
 	valid = true;
-}
-
-std::ostream& operator<<(std::ostream& ostream, const HttpRequest& httpRequest)
-{
-	return ostream << "{" << std::endl <<
-	"\tisValid:" << httpRequest.isValid() << std::endl <<
-	"\trequestType: " << httpRequest.recognizedRequests[httpRequest.getRequestType()] << std::endl <<
-	"\tprotocolVersion: " << httpRequest.getProtocolVersion() << std::endl <<
-	"\tpathToResource: " << httpRequest.getPathToResource() << std::endl <<
-	"}";
 }

@@ -1,14 +1,8 @@
 #include "test-HttpRequest.h"
-#include "test-HttpMap.h"
 #include "test-HttpResponseBuilder.h"
 
 int main()
 {
-	std::cout << "[--------------------TESTING HttpMap now--------------------]" << std::endl;
-	test_HttpMap_insertKeyValuePairs();
-	test_HttpMap_iterateKeyValuePairs();
-	test_HttpMap_iterateEmpty();
-
 	std::cout << "[--------------------TESTING HttpRequest now--------------------]" << std::endl;
 	test_HttpRequest_requestType();
 	test_HttpRequest_requestType_extraSpaces();
