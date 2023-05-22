@@ -1,3 +1,4 @@
+#pragma once
 #include "HttpRequest.h"
 #include "assert.h"
 

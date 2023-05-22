@@ -1,7 +1,15 @@
 #include "test-HttpRequest.h"
+#include "test-HttpMap.h"
+#include "test-HttpResponseBuilder.h"
 
 int main()
 {
+	std::cout << "[--------------------TESTING HttpMap now--------------------]" << std::endl;
+	test_HttpMap_insertKeyValuePairs();
+	test_HttpMap_iterateKeyValuePairs();
+	test_HttpMap_iterateEmpty();
+
+	std::cout << "[--------------------TESTING HttpRequest now--------------------]" << std::endl;
 	test_HttpRequest_requestType();
 	test_HttpRequest_requestType_extraSpaces();
 	test_HttpRequest_pathToResource_valid();
@@ -58,6 +66,12 @@ int main()
 	test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos_missingCRs_extraSeparators();
 	test_HttpRequest_body_multipleHeaders_multipleParameters_noValue();
 	test_HttpRequest_body_multipleHeaders_multipleParameters_noValue_spacesChaos_extraSeparators();
+
+	std::cout << "[--------------------TESTING HttpResponseBuilder now--------------------]" << std::endl;
+	test_HttpResponseBuilder_noHeaders_noBody();
+	test_HttpResponseBuilder_noHeaders_helloWorldHtml();
+	test_HttpResponseBuilder_someHeaders_helloWorldHtml();
+	test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml();
 
 	return 0;
 }

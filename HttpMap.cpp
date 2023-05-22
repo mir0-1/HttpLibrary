@@ -20,33 +20,32 @@ bool HttpMap::hasKey(const std::string& key) const
 	return map.find(key) != map.end();
 }
 
-void HttpMap::getNextPairFromIterator(std::string& key, HttpValue& value)
+std::pair<std::string, HttpValue> HttpMap::getNextPairFromIterator()
 {
-	key = std::string(it->first);
-	value = it->second;
-
 	it++;
+
 	if (isIteratorAtEnd())
 		resetIterator();
-	
+
+	return std::make_pair(it->first, it->second);
 }
 
 bool HttpMap::isIteratorAtEnd() const
 {
-	return it == map.end();
+	return it == map.cend();
 }
 
 void HttpMap::resetIterator()
 {
-	it = map.begin();
+	it = map.cbegin();
+}
+
+bool HttpMap::isIteratorReset() const
+{
+	return it == map.cbegin();
 }
 
 HttpMap::HttpMap()
 {
-	it = map.begin();
-}
-
-HttpMap::~HttpMap()
-{
-	
+	resetIterator();
 }

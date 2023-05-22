@@ -2,8 +2,6 @@
 
 HttpResponseBuilder::HttpResponseBuilder() 
 {
-	overallValid = false;
-	responseCodeValid = false;
 	cookieMap = nullptr;
 	headerMap = nullptr;
 	jsonMap = nullptr;
@@ -14,23 +12,17 @@ const char* HttpResponseBuilder::mapStatusCode()
 	switch(statusCode)
 	{
 		case HttpStatusCode::OK:
-			responseCodeValid = true;
 			return "200 OK";
 		case HttpStatusCode::BAD_REQUEST:
-			responseCodeValid = true;
 			return "400 Bad Request";
 		case HttpStatusCode::NOT_FOUND:
-			responseCodeValid = true;
 			return "404 Not Found";
 		case HttpStatusCode::UNAUTHORIZED:
-			responseCodeValid = true;
 			return "401 Unauthorized";
 		case HttpStatusCode::TOO_MANY_REQUESTS:
-			responseCodeValid = true;
 			return "429 Too Many Requests";
 	}
 
-	responseCodeValid = false;
 	return "500 Internal Server Error";
 }
 
@@ -46,19 +38,19 @@ HttpResponseBuilder& HttpResponseBuilder::setProtocolVersion(double protocolVers
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(HttpImmutableMap* headerMap)
+HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(HttpIterableMap* headerMap)
 {
 	this->headerMap = headerMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setCookieMap(HttpImmutableMap* cookieMap)
+HttpResponseBuilder& HttpResponseBuilder::setCookieMap(HttpIterableMap* cookieMap)
 {
 	this->cookieMap = cookieMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setJsonMap(HttpImmutableMap* jsonMap)
+HttpResponseBuilder& HttpResponseBuilder::setJsonMap(HttpIterableMap* jsonMap)
 {
 	this->jsonMap = jsonMap;
 	return *this;
@@ -86,8 +78,65 @@ HttpResponseBuilder& HttpResponseBuilder::setContentType(HttpContentType content
 
 std::string& HttpResponseBuilder::build()
 {
-	body.clear();
-	body.append("HTTP/1.1 ");
-	body.append(mapStatusCode());
-	body.append("\r\n");
+	output.clear();
+	output.append("HTTP/1.1 ");
+	output.append(mapStatusCode());
+	output.append("\r\n");
+
+	if (!contentType.empty() && (headerMap == nullptr || !headerMap->hasKey("Content-Type")))
+	{
+		output.append("Content-Type: ");
+		output.append(contentType);
+		output.append("\r\n");
+	}
+
+	if (headerMap != nullptr)
+	{
+		headerMap->resetIterator();
+
+		while (!headerMap->isIteratorAtEnd())
+		{
+			std::pair<std::string, HttpValue> header = headerMap->getNextPairFromIterator();
+			output.append(header.first);
+			output.append(": ");
+			output.append(header.second.getAsString());
+			output.append("\r\n");
+
+			if (headerMap->isIteratorReset())
+				break;
+		}
+	}
+
+	if (cookieMap != nullptr)
+	{
+		cookieMap->resetIterator();
+
+		while (!cookieMap->isIteratorAtEnd())
+		{
+			output.append("Set-Cookie: ");
+			std::pair<std::string, HttpValue> cookie = cookieMap->getNextPairFromIterator();
+			output.append(cookie.first);
+			output.append("=");
+			output.append(cookie.second.getAsString());
+			output.append(";");
+			output.append("\r\n");
+
+			if (cookieMap->isIteratorReset())
+				break;
+		}
+	}
+
+	if (!body.empty() && (headerMap == nullptr || !headerMap->hasKey("Content-Length")))
+	{
+		output.append("Content-Length: ");
+		output.append(std::to_string(body.length()));
+		output.append("\r\n");
+	}
+
+	output.append("\r\n");
+
+	if (!body.empty())
+		output.append(body);
+
+	return output;
 }

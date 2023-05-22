@@ -10,9 +10,9 @@ const HttpValue& HttpImmutableMap::getValue(const std::string& key) const
 	return map.getValue(key);
 }
 
-void HttpImmutableMap::getNextPairFromIterator(std::string& key, HttpValue& value)
+std::pair<std::string, HttpValue> HttpImmutableMap::getNextPairFromIterator()
 {
-	return map.getNextPairFromIterator(key, value);
+	return map.getNextPairFromIterator();
 }
 
 void HttpImmutableMap::resetIterator()
@@ -23,6 +23,11 @@ void HttpImmutableMap::resetIterator()
 bool HttpImmutableMap::isIteratorAtEnd() const
 {
 	return map.isIteratorAtEnd();
+}
+
+bool HttpImmutableMap::isIteratorReset() const
+{
+	return map.isIteratorReset();
 }
 
 HttpImmutableMap::HttpImmutableMap(HttpMap& map)
