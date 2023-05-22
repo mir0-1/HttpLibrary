@@ -5,6 +5,7 @@ HttpResponseBuilder::HttpResponseBuilder()
 	cookieMap = nullptr;
 	headerMap = nullptr;
 	jsonMap = nullptr;
+	protocolVersion = 1.1;
 }
 
 const char* HttpResponseBuilder::mapStatusCode()
@@ -76,7 +77,7 @@ HttpResponseBuilder& HttpResponseBuilder::setContentType(HttpContentType content
 	return setContentType("text/html");
 }
 
-void HttpResponseBuilder::buildContentTypeAuto()
+void HttpResponseBuilder::buildContentType()
 {
 	output.append("Content-Type: ");
 	output.append(contentType);
@@ -179,7 +180,7 @@ std::string& HttpResponseBuilder::build()
 		buildJsonBody();
 
 	if (!contentType.empty() && (headerMap == nullptr || !headerMap->hasKey("Content-Type")))
-		buildContentTypeAuto();
+		buildContentType();
 
 	if (headerMap != nullptr)
 		buildHeaders();

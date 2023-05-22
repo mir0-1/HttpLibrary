@@ -1,5 +1,21 @@
 #include "HttpResponseBuilder.h"
 #include "assert.h"
+#include "test-configuration.h"
+
+void printResponse(const std::string& response, std::ostream* log)
+{
+	if (log != nullptr)
+	{
+		(*log) << "----------------------\nGenerating HTTP response" << std::endl;
+		(*log) << response << std::endl;
+	}
+}
+
+void initSomeHeadersCommon(HttpMap &headers)
+{
+	headers.setValue("MyCustomHeader", HttpValue("customVal"));
+	headers.setValue("Another", HttpValue("sth-else"));
+}
 
 void test_HttpResponseBuilder_noHeaders_noBody()
 {
@@ -10,10 +26,9 @@ void test_HttpResponseBuilder_noHeaders_noBody()
 		.setStatusCode(HttpStatusCode::OK)
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 200 OK\r\n\r\n", true, "Testing simple HTTP response", &std::cout);
+	assertTrue(result == "HTTP/1.1 200 OK\r\n\r\n", exitOnFail, "Testing simple HTTP response", testLogger);
 }
 
 void test_HttpResponseBuilder_noHeaders_helloWorldHtml()
@@ -27,10 +42,9 @@ void test_HttpResponseBuilder_noHeaders_helloWorldHtml()
 		.setRawBody("<html><body>Hello world!</body></html>")
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", true, "Testing simple HTTP response with HTML body", &std::cout);
+	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing simple HTTP response with HTML body", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
@@ -38,8 +52,7 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
 	HttpResponseBuilder httpResponseBuilder;
 	HttpMap headers;
 
-	headers.setValue("MyCustomHeader", HttpValue("customVal"));
-	headers.setValue("Another", HttpValue("sth-else"));
+	initSomeHeadersCommon(headers);
 
 	std::string result = httpResponseBuilder
 		.setProtocolVersion(1.1)
@@ -49,10 +62,9 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
 		.setRawBody("<html><body>Hello world!</body></html>")
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", true, "Testing HTTP response with HTML body (headers)", &std::cout);
+	assertTrue(result == "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing HTTP response with HTML body (headers)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
@@ -60,8 +72,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
 	HttpResponseBuilder httpResponseBuilder;
 	HttpMap headers;
 
-	headers.setValue("MyCustomHeader", HttpValue("customVal"));
-	headers.setValue("Another", HttpValue("sth-else"));
+	initSomeHeadersCommon(headers);
 
 	std::string result = httpResponseBuilder
 		.setProtocolVersion(1.1)
@@ -72,10 +83,9 @@ void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
 		.setRawBody("<html><body>Hello world!</body></html>")
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", true, "Testing simple HTTP response with HTML body (headers & cookies)", &std::cout);
+	assertTrue(result == "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing simple HTTP response with HTML body (headers & cookies)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
@@ -83,8 +93,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 	HttpResponseBuilder httpResponseBuilder;
 	HttpMap headers;
 
-	headers.setValue("MyCustomHeader", HttpValue("customVal"));
-	headers.setValue("Another", HttpValue("sth-else"));
+	initSomeHeadersCommon(headers);
 
 	std::string result = httpResponseBuilder
 		.setProtocolVersion(1.1)
@@ -94,10 +103,9 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 		.setJsonMap(&headers)
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", true, "Testing simple HTTP response with JSON body (headers & cookies)", &std::cout);
+	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
@@ -105,8 +113,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 	HttpResponseBuilder httpResponseBuilder;
 	HttpMap headers, jsonMap;
 
-	headers.setValue("MyCustomHeader", HttpValue("customVal"));
-	headers.setValue("Another", HttpValue("sth-else"));
+	initSomeHeadersCommon(headers);
 
 	jsonMap.setValue("Var1", HttpValue("random"));
 	jsonMap.setValue("jsonvar2two", HttpValue("\"I quoted somebody\", said jsonvar2two"));
@@ -119,10 +126,9 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 		.setJsonMap(&jsonMap)
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 79\r\n\r\n{\r\n\tVar1: \"random\",\r\n\tjsonvar2two: \"\\\"I quoted somebody\\\", said jsonvar2two\"\r\n}", true, "Testing simple HTTP response with JSON body (headers & cookies & json quotes)", &std::cout);
+	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 79\r\n\r\n{\r\n\tVar1: \"random\",\r\n\tjsonvar2two: \"\\\"I quoted somebody\\\", said jsonvar2two\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies & json quotes)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaHeaderMap()
@@ -130,8 +136,7 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaH
 	HttpResponseBuilder httpResponseBuilder;
 	HttpMap headers;
 
-	headers.setValue("MyCustomHeader", HttpValue("customVal"));
-	headers.setValue("Another", HttpValue("sth-else"));
+	initSomeHeadersCommon(headers);
 	headers.setValue("Content-Type", HttpValue("custom"));
 
 	std::string result = httpResponseBuilder
@@ -142,10 +147,9 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaH
 		.setRawBody("<html><body>Hello world!</body></html>")
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 400 Bad Request\r\nAnother: sth-else\r\nMyCustomHeader: customVal\r\nContent-Type: custom\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", true, "Testing HTTP response with HTML body (headers, override Content-Type via header)", &std::cout);
+	assertTrue(result == "HTTP/1.1 400 Bad Request\r\nAnother: sth-else\r\nMyCustomHeader: customVal\r\nContent-Type: custom\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing HTTP response with HTML body (headers, override Content-Type via header)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter()
@@ -153,8 +157,7 @@ void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter(
 	HttpResponseBuilder httpResponseBuilder;
 	HttpMap headers;
 
-	headers.setValue("MyCustomHeader", HttpValue("customVal"));
-	headers.setValue("Another", HttpValue("sth-else"));
+	initSomeHeadersCommon(headers);
 
 	std::string result = httpResponseBuilder
 		.setProtocolVersion(1.1)
@@ -165,8 +168,28 @@ void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter(
 		.setJsonMap(&headers)
 		.build();
 
-	std::cout << "----------------------\nGenerating HTTP response" << std::endl;
-	std::cout << result << std::endl;
+	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: custom\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", true, "Testing simple HTTP response with JSON body (headers & cookies, override Content-Type via setter)", &std::cout);
+	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: custom\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies, override Content-Type via setter)", testLogger);
+}
+
+void test_HttpResponseBuilder_someHeaders_noCookies_htmlBody_overrideContentLength()
+{
+	HttpResponseBuilder httpResponseBuilder;
+	HttpMap headers;
+
+	initSomeHeadersCommon(headers);
+
+	headers.setValue("Content-Length", HttpValue("1337"));
+
+	std::string result = httpResponseBuilder
+		.setProtocolVersion(1.1)
+		.setStatusCode(HttpStatusCode::OK)
+		.setHeaderMap(&headers)
+		.setRawBody("<html>Hello world</html>")
+		.build();
+
+	printResponse(result, testLogger);
+
+	assertTrue(result == "HTTP/1.1 200 OK\r\nAnother: sth-else\r\nMyCustomHeader: customVal\r\nContent-Length: 1337\r\n\r\n<html>Hello world</html>", exitOnFail, "Testing HTTP response with HTML body and some headers (check Content-Length override)", testLogger);
 }

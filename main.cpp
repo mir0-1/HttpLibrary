@@ -76,6 +76,7 @@ int main()
 	test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes();
 	test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaHeaderMap();
 	test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter();
+	test_HttpResponseBuilder_someHeaders_noCookies_htmlBody_overrideContentLength();
 
 	return 0;
 }

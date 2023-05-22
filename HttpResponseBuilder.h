@@ -19,7 +19,7 @@ class HttpResponseBuilder
 		HttpIterableMap* jsonMap;
 
 		const char* mapStatusCode();
-		void buildContentTypeAuto();
+		void buildContentType();
 		void buildHeaders();
 		void buildCookies();
 		void buildContentLengthAuto();
