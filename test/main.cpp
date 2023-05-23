@@ -6,7 +6,12 @@ int main()
 	std::cout << "[--------------------TESTING HttpRequest now--------------------]" << std::endl;
 	test_HttpRequest_requestType();
 	test_HttpRequest_requestType_extraSpaces();
-	test_HttpRequest_pathToResource_valid();
+	test_HttpRequest_pathToResource_valid_noExtension();
+	test_HttpRequest_pathToResource_valid_extension();
+	test_HttpRequest_pathToResource_valid_emptyExtension();
+	test_HttpRequest_pathToResource_doubleSlash();
+	test_HttpRequest_pathToResource_extensionWithSlash();
+	test_HttpRequest_pathToResource_forbiddenChar();
 	test_HttpRequest_pathToResource_withSpaces();
 	test_HttpRequest_query_empty();
 	test_HttpRequest_query_doubleQuestionMarkOnly();

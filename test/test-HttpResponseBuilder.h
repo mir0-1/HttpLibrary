@@ -44,7 +44,7 @@ void test_HttpResponseBuilder_noHeaders_helloWorldHtml()
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing simple HTTP response with HTML body", testLogger);
+	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing simple HTTP response with HTML body", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
@@ -64,7 +64,7 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing HTTP response with HTML body (headers)", testLogger);
+	assertTrue(result == "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing HTTP response with HTML body (headers)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
@@ -85,7 +85,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing simple HTTP response with HTML body (headers & cookies)", testLogger);
+	assertTrue(result == "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 38\r\n\r\n<html><body>Hello world!</body></html>", exitOnFail, "Testing simple HTTP response with HTML body (headers & cookies)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
@@ -105,7 +105,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies)", testLogger);
+	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
@@ -128,7 +128,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 79\r\n\r\n{\r\n\tVar1: \"random\",\r\n\tjsonvar2two: \"\\\"I quoted somebody\\\", said jsonvar2two\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies & json quotes)", testLogger);
+	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 79\r\n\r\n{\r\n\tVar1: \"random\",\r\n\tjsonvar2two: \"\\\"I quoted somebody\\\", said jsonvar2two\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies & json quotes)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaHeaderMap()
@@ -170,7 +170,7 @@ void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter(
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: custom\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies, override Content-Type via setter)", testLogger);
+	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: custom; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 57\r\n\r\n{\r\n\tMyCustomHeader: \"customVal\",\r\n\tAnother: \"sth-else\"\r\n}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies, override Content-Type via setter)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_noCookies_htmlBody_overrideContentLength()

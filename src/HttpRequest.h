@@ -15,7 +15,8 @@ class HttpRequest
 
 		bool valid;
 		HttpRequestType requestType;
-		std::string* pathToResource;
+		std::string pathToResource;
+		std::string resourceExtension;
 		double protocolVersion;
 
 		CommonParsableMap queryParametersMapInternal;
@@ -43,7 +44,8 @@ class HttpRequest
 	public:
 		bool isValid() const;
 		HttpRequestType getRequestType() const;
-		std::string getPathToResource() const;
+		const std::string& getPathToResource() const;
+		const std::string& getResourceExtension() const;
 		double getProtocolVersion() const;
 		const HttpImmutableMap& getQueryParametersMap() const;
 		const HttpImmutableMap& getHeadersMap() const;

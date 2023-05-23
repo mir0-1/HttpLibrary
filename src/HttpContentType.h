@@ -3,5 +3,6 @@
 enum HttpContentType
 {
 	JSON,
-	HTML
+	HTML,
+	TEXT
 };

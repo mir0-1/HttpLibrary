@@ -35,7 +35,7 @@ void test_HttpRequest_requestType_extraSpaces()
 	assertTrue(httpRequest.getRequestType() == HttpRequestType::POST, exitOnFail, "Testing HttpRequestType (extra spaces)", testLogger);
 }
 
-void test_HttpRequest_pathToResource_valid()
+void test_HttpRequest_pathToResource_valid_noExtension()
 {
 	char request[] = "GET /my/path?param1=key HTTP/1.1\r\n\r\n";
 
@@ -44,6 +44,61 @@ void test_HttpRequest_pathToResource_valid()
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if simple GET request is valid with some parameters", testLogger);
 	assertTrue(httpRequest.getPathToResource() == "/my/path", exitOnFail, "Testing PathToResource correctness", testLogger);
+	assertTrue(httpRequest.getResourceExtension() == "", exitOnFail, "Testing PathToResource extension correctness", testLogger);
+}
+
+void test_HttpRequest_pathToResource_valid_extension()
+{
+	char request[] = "GET /my/path.ext?param1=key HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+	printRequest(request, testLogger);
+
+	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if simple GET request is valid with some parameters (extension)", testLogger);
+	assertTrue(httpRequest.getPathToResource() == "/my/path.ext", exitOnFail, "Testing PathToResource correctness (extension)", testLogger);
+	assertTrue(httpRequest.getResourceExtension() == "ext", exitOnFail, "Testing PathToResource extension correctness (extension)", testLogger);
+}
+
+void test_HttpRequest_pathToResource_valid_emptyExtension()
+{
+	char request[] = "GET /my/path. HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+	printRequest(request, testLogger);
+
+	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if simple GET request is valid (empty extension)", testLogger);
+	assertTrue(httpRequest.getPathToResource() == "/my/path.", exitOnFail, "Testing PathToResource correctness (empty extension)", testLogger);
+	assertTrue(httpRequest.getResourceExtension() == "", exitOnFail, "Testing PathToResource extension correctness (empty extension)", testLogger);
+}
+
+void test_HttpRequest_pathToResource_doubleSlash()
+{
+	char request[] = "GET /my//path.ext?param1=key HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+	printRequest(request, testLogger);
+
+	assertTrue(!httpRequest.isValid(), exitOnFail, "Testing if simple GET request is invalid with some parameters (double slash)", testLogger);
+}
+
+void test_HttpRequest_pathToResource_extensionWithSlash()
+{
+	char request[] = "GET /my/path.ex/t.abc?param1=key HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+	printRequest(request, testLogger);
+
+	assertTrue(!httpRequest.isValid(), exitOnFail, "Testing if simple GET request is invalid with some parameters (extension with slash)", testLogger);
+}
+
+void test_HttpRequest_pathToResource_forbiddenChar()
+{
+	char request[] = "GET /my:/path.ext?param1=key HTTP/1.1\r\n\r\n";
+
+	HttpRequest httpRequest(request);
+	printRequest(request, testLogger);
+
+	assertTrue(!httpRequest.isValid(), exitOnFail, "Testing if simple GET request is invalid with some parameters (forbidden char)", testLogger);
 }
 
 void test_HttpRequest_pathToResource_withSpaces()

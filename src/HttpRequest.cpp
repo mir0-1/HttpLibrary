@@ -46,14 +46,35 @@ char* HttpRequest::parseHttpRequestType(char* src)
 char* HttpRequest::copyPathToResource(char* src)
 {
 	int pathLength = 0;
+	int extensionStartIndex = -1;
 	int i;
-	for (i = 0; src[i] && !isspace(src[i]) && src[i] != '?'; i++)
-		pathLength++;
+
+	static const std::string forbiddenChars = "\\%*:;|\"\'!@()<>";
+
+	bool slashFlag = false;
+
+	for (i = 0; src[i] && !isspace(src[i]) && src[i] != '?'; i++, pathLength++)
+	{
+		if (src[i] == '/')
+		{
+			if (extensionStartIndex != -1 || slashFlag == true)
+				return nullptr;
+			slashFlag = true;
+			continue;
+		}
+		slashFlag = false;
+		if (forbiddenChars.find_first_of(src[i]) != std::string::npos)
+			return nullptr;
+		if (src[i] == '.')
+			extensionStartIndex = i + 1;
+	}
 
 	if (pathLength == 0)
 		return nullptr;
 
-	pathToResource = new std::string(src, pathLength);
+	pathToResource.append(src, pathLength);
+	if (extensionStartIndex != -1 && extensionStartIndex < i)
+		resourceExtension.append(src + extensionStartIndex, pathLength - extensionStartIndex);
 
 	return &src[i];
 }
@@ -112,11 +133,14 @@ HttpRequestType HttpRequest::getRequestType() const
 	return requestType;
 }
 
-std::string HttpRequest::getPathToResource() const
+const std::string& HttpRequest::getPathToResource() const
 {
-	if (pathToResource == nullptr)
-		return "";
-	return *pathToResource;
+	return pathToResource;
+}
+
+const std::string& HttpRequest::getResourceExtension() const
+{
+	return resourceExtension;
 }
 
 double HttpRequest::getProtocolVersion() const

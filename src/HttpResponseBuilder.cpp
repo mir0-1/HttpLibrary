@@ -84,14 +84,17 @@ HttpResponseBuilder& HttpResponseBuilder::setContentType(HttpContentType content
 	if (contentType == HttpContentType::JSON)
 		return setContentType("application/json");
 
-	return setContentType("text/html");
+	if (contentType == HttpContentType::HTML)
+		return setContentType("text/html");
+
+	return setContentType("text/plain");
 }
 
 void HttpResponseBuilder::buildContentType()
 {
 	output.append("Content-Type: ");
 	output.append(contentType);
-	output.append("\r\n");
+	output.append("; charset=utf-8\r\n");
 }
 
 void HttpResponseBuilder::buildHeaders()
