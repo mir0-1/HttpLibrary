@@ -11,7 +11,7 @@ void printResponse(const std::string& response, std::ostream* log)
 	}
 }
 
-void initSomeHeadersCommon(CommonMutableMap &headers)
+void initSomeHeadersCommon(HttpMutableMap &headers)
 {
 	headers.setValue("MyCustomHeader", ValueWrapper("customVal"));
 	headers.setValue("Another", ValueWrapper("sth-else"));
@@ -50,7 +50,7 @@ void test_HttpResponseBuilder_noHeaders_helloWorldHtml()
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	CommonMutableMap headers;
+	HttpMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -70,7 +70,7 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml()
 void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	CommonMutableMap headers;
+	HttpMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -91,7 +91,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_helloWorldHtml()
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	CommonMutableMap headers;
+	HttpMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -111,7 +111,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	CommonMutableMap headers, jsonMap;
+	HttpMutableMap headers, jsonMap;
 
 	initSomeHeadersCommon(headers);
 
@@ -134,7 +134,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaHeaderMap()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	CommonMutableMap headers;
+	HttpMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 	headers.setValue("Content-Type", ValueWrapper("custom"));
@@ -155,7 +155,7 @@ void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaH
 void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	CommonMutableMap headers;
+	HttpMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 
@@ -176,7 +176,7 @@ void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter(
 void test_HttpResponseBuilder_someHeaders_noCookies_htmlBody_overrideContentLength()
 {
 	HttpResponseBuilder httpResponseBuilder;
-	CommonMutableMap headers;
+	HttpMutableMap headers;
 
 	initSomeHeadersCommon(headers);
 

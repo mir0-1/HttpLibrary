@@ -94,7 +94,7 @@ void test_HttpRequest_query_noKeyValueSeperator()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when param has no value - \"?param1\"", testLogger);
 	assertTrue(!parametersMap.hasKey("param1"), exitOnFail, "Testing if valueless param1 is absent (not considered a map entry)", testLogger);
@@ -107,7 +107,7 @@ void test_HttpRequest_query_singleParam_emptyValue()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"?param1=\"", testLogger);
 	assertTrue(parametersMap.hasKey("param1"), exitOnFail, "Testing if empty value param1 is present", testLogger);
@@ -121,7 +121,7 @@ void test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandAft
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"?param1====&\"", testLogger);
 	assertTrue(parametersMap.hasKey("param1==="), exitOnFail, "Testing if empty value param1 is present (in query \"?param1====&\")", testLogger);
@@ -135,7 +135,7 @@ void test_HttpRequest_query_singleParam_multipleKeyValueSeparatorAndAmpersandBef
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"?&param1====\"", testLogger);
 	assertTrue(parametersMap.hasKey("param1==="), exitOnFail, "Testing if empty value param1 is present (in query \"?&param1====&\")", testLogger);
@@ -149,7 +149,7 @@ void test_HttpRequest_query_singleParam_emptyValueAndAmpersand()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"?param1=&\"", testLogger);
 	assertTrue(parametersMap.hasKey("param1"), exitOnFail, "Testing if empty value param1 is present (when there is &)", testLogger);
@@ -163,7 +163,7 @@ void test_HttpRequest_query_multipleParams_emptyValue()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"?param1=&param2=\"", testLogger);
 	assertTrue(parametersMap.hasKey("param1"), exitOnFail, "Testing first if empty value param1 is present", testLogger);
@@ -179,7 +179,7 @@ void test_HttpRequest_query_multipleParams_allSeperatorChaos()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"==&param1=&&param2&&&param3=&\"", testLogger);
 	assertTrue(parametersMap.hasKey("param1"), exitOnFail, "Testing first if empty value param1 is present (when there is &/&&/&&&)", testLogger);
@@ -197,7 +197,7 @@ void test_HttpRequest_query_multipleParams_emptyValueAndAmpersand()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parametersMap = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"?param1=&param2=&\"", testLogger);
 	assertTrue(parametersMap.hasKey("param1"), exitOnFail, "Testing first if empty value param1 is present (when there is &)", testLogger);
@@ -213,7 +213,7 @@ void test_HttpRequest_query_multipleParams()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	ValueWrapper expectedFirst("value");
 	ValueWrapper expectedSecond("343");
@@ -235,7 +235,7 @@ void test_HttpRequest_query_multipleParams_ampersandAtEnd()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	ValueWrapper expectedFirst("value");
 	ValueWrapper expectedSecond("343");
@@ -257,7 +257,7 @@ void test_HttpRequest_query_multipleParams_multipleSeparator()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	ValueWrapper expectedFirst("value");
 	ValueWrapper expectedSecond("343");
@@ -279,7 +279,7 @@ void test_HttpRequest_query_multipleParams_fictionalParameter()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& parameters = httpRequest.getQueryParametersMap();
+	const HttpImmutableMap& parameters = httpRequest.getQueryParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request is valid when query is \"/my/path?firstParameter=value&secondParameter=343\" and extra spaces", testLogger);
 	assertTrue(parameters.getValue("imaginaryParameter").isNull(), exitOnFail, "Testing absence of imaginaryParameter", testLogger);
@@ -345,7 +345,7 @@ void test_HttpRequest_headers_singleNonCookie()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if single header request is valid", testLogger);
 	assertTrue(headers.hasKey("MyHeader"), exitOnFail, "Testing single header presence", testLogger);
@@ -359,7 +359,7 @@ void test_HttpRequest_headers_multipleNonCookies()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple header request is valid", testLogger);
 	assertTrue(headers.hasKey("MyHeader"), exitOnFail, "Testing first header presence", testLogger);
@@ -375,7 +375,7 @@ void test_HttpRequest_headers_multipleNonCookies_spaceChaos()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple header request is valid (\"space chaos\")", testLogger);
 	assertTrue(headers.hasKey("MyHe ader"), exitOnFail, "Testing first header presence", testLogger);
@@ -391,7 +391,7 @@ void test_HttpRequest_headers_fictionalNonCookie()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple header request is valid, second time", testLogger);
 	assertTrue(!headers.hasKey("ThirdHeader"), exitOnFail, "Testing non-existing header absence", testLogger);;
@@ -404,7 +404,7 @@ void test_HttpRequest_headers_singleCookie()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if single cookie request is valid", testLogger);
 	assertTrue(cookies.hasKey("key1"), exitOnFail, "Testing single cookie presence", testLogger);
@@ -418,7 +418,7 @@ void test_HttpRequest_headers_singleCookie_emptyValue()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if single cookie request is valid (empty value)", testLogger);
 	assertTrue(cookies.hasKey("key1"), exitOnFail, "Testing single cookie presence (empty value)", testLogger);
@@ -432,7 +432,7 @@ void test_HttpRequest_headers_singleCookie_oneKeyMultipleValues()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if single cookie request is valid (one key two values)", testLogger);
 	assertTrue(cookies.hasKey("key1=value1"), exitOnFail, "Testing single cookie presence (one key two values)", testLogger);
@@ -446,7 +446,7 @@ void test_HttpRequest_headers_singleCookie_oneKeyMultipleValues_extraSeperators(
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if single cookie request is valid (one key two values)", testLogger);
 	assertTrue(cookies.hasKey("key1====value1=="), exitOnFail, "Testing single cookie presence (one key two values)", testLogger);
@@ -460,8 +460,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (same header)", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (same header)", testLogger);
@@ -478,8 +478,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_noValue()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (same header & no value)", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (same header & no value)", testLogger);
@@ -496,8 +496,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparator()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (same header & no value, no \'=\')", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (same header & no value, no \'=\')", testLogger);
@@ -512,8 +512,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_noValueNoSeparatorAndOn
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (same header & no value, no \'=\', 1 ok)", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (same header & no value, no \'=\', 1 ok)", testLogger);
@@ -529,8 +529,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_extraSpaces()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (same header with extra spaces)", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (same header with extra spaces)", testLogger);
@@ -547,8 +547,8 @@ void test_HttpRequest_headers_multipleCookies_sameHeader_spaceInKey()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (space in key)", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (space in key)", testLogger);
@@ -565,8 +565,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (different header)", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (different header)", testLogger);
@@ -583,8 +583,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_extraSpaces()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (different header & extra spaces)", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (different header & extra spaces)", testLogger);
@@ -601,8 +601,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_spacesChaos()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (\"spaces chaos\")", testLogger);
 	assertTrue(!headers.hasKey("MyCook ie"), exitOnFail, "Testing the absence of Cookie header in the header map (\"spaces chaos\")", testLogger);
@@ -619,8 +619,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_multipleSeparators
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (different header & multiple \';\')", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (different header & multiple \';\')", testLogger);
@@ -639,8 +639,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparat
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (different header & multiple \';\' and \'=\')", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (different header & multiple \';\' and \'=\')", testLogger);
@@ -659,8 +659,8 @@ void test_HttpRequest_headers_multipleCookies_differentHeader_allMultipleSeparat
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& cookies = httpRequest.getCookiesMap();
-	const CommonImmutableMap& headers = httpRequest.getHeadersMap();
+	const HttpImmutableMap& cookies = httpRequest.getCookiesMap();
+	const HttpImmutableMap& headers = httpRequest.getHeadersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if multiple cookie request is valid (different header & multiple \';\' and \'=\')", testLogger);
 	assertTrue(!headers.hasKey("Cookie"), exitOnFail, "Testing the absence of Cookie header in the header map (different header & multiple \';\' and \'=\')", testLogger);
@@ -679,7 +679,7 @@ void test_HttpRequest_body_noHeaders()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (no headers)", testLogger);
 	assertTrue(bodyParams.hasKey("MyBody"), exitOnFail, "Testing presence of parameter MyBody (no headers)", testLogger);
@@ -693,7 +693,7 @@ void test_HttpRequest_body_noHeaders_extraNewlineMissing()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(!httpRequest.isValid(), exitOnFail, "Testing if request with body is invalid (no headers & extra LF missing)", testLogger);
 }
@@ -705,7 +705,7 @@ void test_HttpRequest_body_singleNonCookie()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (single non-cookie)", testLogger);
 	assertTrue(bodyParams.hasKey("MyBody"), exitOnFail, "Testing presence of parameter MyBody (single non-cookie)", testLogger);
@@ -719,7 +719,7 @@ void test_HttpRequest_body_singleCookie()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (single cookie)", testLogger);
 	assertTrue(bodyParams.hasKey("MyBody"), exitOnFail, "Testing presence of parameter MyBody (single cookie)", testLogger);
@@ -733,7 +733,7 @@ void test_HttpRequest_body_multipleCookiesSingleHeader()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (multiple cookie single header)", testLogger);
 	assertTrue(bodyParams.hasKey("MyBody"), exitOnFail, "Testing presence of parameter MyBody (multiple cookie single header)", testLogger);
@@ -747,7 +747,7 @@ void test_HttpRequest_body_noHeaders_multipleParameters()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (no headers & multiple params)", testLogger);
 	assertTrue(bodyParams.hasKey("MyBody"), exitOnFail, "Testing presence of parameter MyBody (no headers & multiple params)", testLogger);
@@ -763,7 +763,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (multi headers & multiple params)", testLogger);
 	assertTrue(bodyParams.hasKey("MyBody"), exitOnFail, "Testing presence of parameter MyBody (multi headers & multiple params)", testLogger);
@@ -779,7 +779,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (multi headers & multiple params, \"space chaos\")", testLogger);
 	assertTrue(bodyParams.hasKey("MyB od y"), exitOnFail, "Testing presence of parameter MyBody (multi headers & multiple params, \"space chaos\")", testLogger);
@@ -795,7 +795,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos_missin
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (multi headers & multiple params, \"space chaos\", no \\r)", testLogger);
 	assertTrue(bodyParams.hasKey("MyB od y"), exitOnFail, "Testing presence of parameter MyBody (multi headers & multiple params, \"space chaos\", no \\r)", testLogger);
@@ -811,7 +811,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters_spacesChaos_missin
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (multi headers & multiple params, \"space chaos\", no \\r, more \'&\'')", testLogger);
 	assertTrue(bodyParams.hasKey("MyB od y"), exitOnFail, "Testing presence of parameter MyBody (multi headers & multiple params, \"space chaos\", no \\r, more \'&\'')", testLogger);
@@ -827,7 +827,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters_noValue()
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (param /w no value)", testLogger);
 	assertTrue(bodyParams.hasKey("MyBody"), exitOnFail, "Testing presence of parameter MyBody (param /w no value)", testLogger);
@@ -844,7 +844,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters_noValue_spacesChao
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (param /w no value, \"space chaos\", \'&\'')", testLogger);
 	assertTrue(bodyParams.hasKey("MyBod y"), exitOnFail, "Testing presence of parameter MyBody (param /w no value, \"space chaos\", \'&\')", testLogger);
@@ -861,7 +861,7 @@ void test_HttpRequest_body_multipleHeaders_multipleParameters_keyWithEmptyValue_
 	HttpRequest httpRequest(request);
 	printRequest(request, testLogger);
 
-	const CommonImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
+	const HttpImmutableMap& bodyParams = httpRequest.getBodyParametersMap();
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if request with body is valid (param /w no value, \"space chaos\", \'&\'')", testLogger);
 	assertTrue(bodyParams.hasKey("MyBod y"), exitOnFail, "Testing presence of parameter MyBody (param /w no value, \"space chaos\", \'&\')", testLogger);

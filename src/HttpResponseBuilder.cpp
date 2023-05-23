@@ -39,19 +39,19 @@ HttpResponseBuilder& HttpResponseBuilder::setProtocolVersion(double protocolVers
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(CommonIterableMap* headerMap)
+HttpResponseBuilder& HttpResponseBuilder::setHeaderMap(HttpIterableMap* headerMap)
 {
 	this->headerMap = headerMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setCookieMap(CommonIterableMap* cookieMap)
+HttpResponseBuilder& HttpResponseBuilder::setCookieMap(HttpIterableMap* cookieMap)
 {
 	this->cookieMap = cookieMap;
 	return *this;
 }
 
-HttpResponseBuilder& HttpResponseBuilder::setJsonMap(CommonIterableMap* jsonMap)
+HttpResponseBuilder& HttpResponseBuilder::setJsonMap(HttpIterableMap* jsonMap)
 {
 	this->jsonMap = jsonMap;
 	return *this;

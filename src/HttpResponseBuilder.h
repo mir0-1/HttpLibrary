@@ -2,8 +2,12 @@
 #include <iostream>
 #include <string>
 #include "HttpStatusCode.h"
-#include "../../SimpleKeyValueParseLib/src/CommonIterableMap.h"
+#include "../../SimpleKeyValueParseLib/src/template/CommonMutableMap.h"
 #include "HttpContentType.h"
+#include "../../SimpleKeyValueParseLib/src/main/ValueWrapper.h"
+
+typedef CommonIterableMap<std::string, ValueWrapper> HttpIterableMap;
+typedef CommonMutableMap<std::string, ValueWrapper> HttpMutableMap;
 
 class HttpResponseBuilder
 {
@@ -14,9 +18,9 @@ class HttpResponseBuilder
 		HttpStatusCode statusCode;
 		double protocolVersion;
 
-		CommonIterableMap* headerMap;
-		CommonIterableMap* cookieMap;
-		CommonIterableMap* jsonMap;
+		HttpIterableMap* headerMap;
+		HttpIterableMap* cookieMap;
+		HttpIterableMap* jsonMap;
 
 		const char* mapStatusCode();
 		void buildContentType();
@@ -30,9 +34,9 @@ class HttpResponseBuilder
 
 		HttpResponseBuilder& setStatusCode(HttpStatusCode code);
 		HttpResponseBuilder& setProtocolVersion(double protocolVersion);
-		HttpResponseBuilder& setHeaderMap(CommonIterableMap* headerMap);
-		HttpResponseBuilder& setCookieMap(CommonIterableMap* cookieMap);
-		HttpResponseBuilder& setJsonMap(CommonIterableMap* jsonMap);
+		HttpResponseBuilder& setHeaderMap(HttpIterableMap* headerMap);
+		HttpResponseBuilder& setCookieMap(HttpIterableMap* cookieMap);
+		HttpResponseBuilder& setJsonMap(HttpIterableMap* jsonMap);
 		HttpResponseBuilder& setRawBody(const std::string& body);
 		HttpResponseBuilder& setContentType(const std::string& contentType);
 		HttpResponseBuilder& setContentType(HttpContentType contentType);

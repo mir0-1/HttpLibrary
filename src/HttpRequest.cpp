@@ -124,22 +124,22 @@ double HttpRequest::getProtocolVersion() const
 	return protocolVersion;
 }
 
-CommonImmutableMap& HttpRequest::getQueryParametersMap()
+const HttpImmutableMap& HttpRequest::getQueryParametersMap() const
 {
 	return queryParametersMapImmutable;
 }
 
-CommonImmutableMap& HttpRequest::getHeadersMap()
+const HttpImmutableMap& HttpRequest::getHeadersMap() const
 {
 	return headersMapImmutable;
 }
 
-CommonImmutableMap& HttpRequest::getCookiesMap()
+const HttpImmutableMap& HttpRequest::getCookiesMap() const
 {
 	return cookiesMapImmutable;
 }
 
-CommonImmutableMap& HttpRequest::getBodyParametersMap()
+const HttpImmutableMap& HttpRequest::getBodyParametersMap() const
 {
 	return bodyParametersMapImmutable;
 }
