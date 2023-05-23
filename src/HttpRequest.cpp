@@ -19,7 +19,7 @@ const int HttpRequest::numberOfRecognizedRequests = 6;
 const char* HttpRequest::commonProtocolSubstring = "HTTP/";
 
 
-char* HttpRequest::parseRequestType(char* src)
+char* HttpRequest::parseHttpRequestType(char* src)
 {
 	for (int i = 0; src[i]; i++)
 	{
@@ -34,7 +34,7 @@ char* HttpRequest::parseRequestType(char* src)
 			}
 			if (matchFlag == true)
 			{
-				requestType = (RequestType)reqIndex;
+				requestType = (HttpRequestType)reqIndex;
 				return &src[j+1];
 			}
 		}
@@ -107,7 +107,7 @@ bool HttpRequest::isValid() const
 	return valid;
 }
 
-RequestType HttpRequest::getRequestType() const
+HttpRequestType HttpRequest::getRequestType() const
 {
 	return requestType;
 }
@@ -255,7 +255,7 @@ HttpRequest::HttpRequest(char* src)
 	
 	VALIDATE_PTR(src);
 
-	src = parseRequestType(src);
+	src = parseHttpRequestType(src);
 	src = ignoreExtraSpaces(src);
 	VALIDATE_PTR(src);
 

@@ -21,7 +21,7 @@ void test_HttpRequest_requestType()
 	printRequest(request, testLogger);
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if simple POST request is valid", testLogger);
-	assertTrue(httpRequest.getRequestType() == RequestType::POST, exitOnFail, "Testing RequestType", testLogger);
+	assertTrue(httpRequest.getRequestType() == HttpRequestType::POST, exitOnFail, "Testing HttpRequestType", testLogger);
 }
 
 void test_HttpRequest_requestType_extraSpaces()
@@ -32,7 +32,7 @@ void test_HttpRequest_requestType_extraSpaces()
 	printRequest(request, testLogger);
 
 	assertTrue(httpRequest.isValid(), exitOnFail, "Testing if simple POST request is valid (extra spaces)", testLogger);
-	assertTrue(httpRequest.getRequestType() == RequestType::POST, exitOnFail, "Testing RequestType (extra spaces)", testLogger);
+	assertTrue(httpRequest.getRequestType() == HttpRequestType::POST, exitOnFail, "Testing HttpRequestType (extra spaces)", testLogger);
 }
 
 void test_HttpRequest_pathToResource_valid()

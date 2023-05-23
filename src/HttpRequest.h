@@ -1,5 +1,5 @@
 #pragma once
-#include "RequestType.h"
+#include "HttpRequestType.h"
 #include "../../SimpleKeyValueParseLib/src/main/CommonParsableMap.h"
 #include "../../SimpleKeyValueParseLib/src/template/CommonImmutableMap.h"
 #include <iostream>
@@ -14,7 +14,7 @@ class HttpRequest
 		static const char* commonProtocolSubstring;
 
 		bool valid;
-		RequestType requestType;
+		HttpRequestType requestType;
 		std::string* pathToResource;
 		double protocolVersion;
 
@@ -29,7 +29,7 @@ class HttpRequest
 		HttpImmutableMap bodyParametersMapImmutable;
 
 	private:
-		char* parseRequestType(char* src);
+		char* parseHttpRequestType(char* src);
 		char* copyPathToResource(char* src);
 		char* parseProtocolVersion(char* src);
 		char* parseParametersFromResourcePath(char* src);
@@ -42,7 +42,7 @@ class HttpRequest
 
 	public:
 		bool isValid() const;
-		RequestType getRequestType() const;
+		HttpRequestType getRequestType() const;
 		std::string getPathToResource() const;
 		double getProtocolVersion() const;
 		const HttpImmutableMap& getQueryParametersMap() const;

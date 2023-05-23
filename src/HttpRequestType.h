@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-enum RequestType
+enum HttpRequestType
 {
 	GET,
 	POST,
