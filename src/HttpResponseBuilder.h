@@ -22,6 +22,7 @@ class HttpResponseBuilder
 		HttpIterableMap* cookieMap;
 		HttpIterableMap* jsonMap;
 
+		HttpResponseBuilder& reset();
 		const char* mapStatusCode();
 		void buildContentType();
 		void buildHeaders();

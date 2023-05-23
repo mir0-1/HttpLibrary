@@ -2,10 +2,20 @@
 
 HttpResponseBuilder::HttpResponseBuilder() 
 {
+	reset();
+}
+
+HttpResponseBuilder& HttpResponseBuilder::reset()
+{
 	cookieMap = nullptr;
 	headerMap = nullptr;
 	jsonMap = nullptr;
 	protocolVersion = 1.1;
+	output.clear();
+	body.clear();
+	contentType.clear();
+
+	return *this;
 }
 
 const char* HttpResponseBuilder::mapStatusCode()
@@ -21,7 +31,7 @@ const char* HttpResponseBuilder::mapStatusCode()
 		case HttpStatusCode::UNAUTHORIZED:
 			return "401 Unauthorized";
 		case HttpStatusCode::TOO_MANY_REQUESTS:
-			return "429 Too Many Requests";
+			return "425 Too Early";
 	}
 
 	return "500 Internal Server Error";
