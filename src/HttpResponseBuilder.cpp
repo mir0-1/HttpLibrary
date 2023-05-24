@@ -32,6 +32,8 @@ const char* HttpResponseBuilder::mapStatusCode()
 			return "401 Unauthorized";
 		case HttpStatusCode::TOO_MANY_REQUESTS:
 			return "425 Too Early";
+		case HttpStatusCode::FOUND:
+			return "302 Found";
 	}
 
 	return "500 Internal Server Error";
