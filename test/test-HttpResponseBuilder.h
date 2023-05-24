@@ -105,8 +105,31 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBody()
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 47\r\n\r\n{MyCustomHeader:\"customVal\",Another:\"sth-else\"}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies)", testLogger);
+	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 51\r\n\r\n{\"MyCustomHeader\":\"customVal\",\"Another\":\"sth-else\"}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies)", testLogger);
 }
+
+void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodySingleQuotes()
+{
+	HttpResponseBuilder httpResponseBuilder;
+	HttpMutableMap headers, jsonMap;
+
+	initSomeHeadersCommon(headers);
+
+	jsonMap.setValue("Var1", ValueWrapper("\""));
+
+	std::string result = httpResponseBuilder
+		.setProtocolVersion(1.1)
+		.setStatusCode(HttpStatusCode::OK)
+		.setHeaderMap(&headers)
+		.setCookieMap(&headers)
+		.setJsonMap(&jsonMap)
+		.build();
+
+	printResponse(result, testLogger);
+
+	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 13\r\n\r\n{\"Var1\":\"\\\"\"}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies & json single quotes)", testLogger);
+}
+
 
 void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 {
@@ -128,7 +151,7 @@ void test_HttpResponseBuilder_someHeaders_someCookies_jsonBodyWithQuotes()
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 69\r\n\r\n{Var1:\"random\",jsonvar2two:\"\\\"I quoted somebody\\\", said jsonvar2two\"}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies & json quotes)", testLogger);
+	assertTrue(result == "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 73\r\n\r\n{\"Var1\":\"random\",\"jsonvar2two\":\"\\\"I quoted somebody\\\", said jsonvar2two\"}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies & json quotes)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_helloWorldHtml_overrideContentTypeViaHeaderMap()
@@ -170,7 +193,7 @@ void test_HttpResponseBuilder_someHeaders_jsonBody_overrideContentTypeViaSetter(
 
 	printResponse(result, testLogger);
 
-	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: custom; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 47\r\n\r\n{MyCustomHeader:\"customVal\",Another:\"sth-else\"}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies, override Content-Type via setter)", testLogger);
+	assertTrue(result == "HTTP/1.1 401 Unauthorized\r\nContent-Type: custom; charset=utf-8\r\nMyCustomHeader: customVal\r\nAnother: sth-else\r\nSet-Cookie: MyCustomHeader=customVal; HttpOnly\r\nSet-Cookie: Another=sth-else; HttpOnly\r\nContent-Length: 51\r\n\r\n{\"MyCustomHeader\":\"customVal\",\"Another\":\"sth-else\"}", exitOnFail, "Testing simple HTTP response with JSON body (headers & cookies, override Content-Type via setter)", testLogger);
 }
 
 void test_HttpResponseBuilder_someHeaders_noCookies_htmlBody_overrideContentLength()

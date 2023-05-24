@@ -149,8 +149,9 @@ void HttpResponseBuilder::buildJsonBody()
 	while (!jsonMap->isIteratorAtEnd())
 	{
 		std::pair<std::string, ValueWrapper> jsonPair = jsonMap->getNextPairFromIterator();
+		body.append("\"");
 		body.append(jsonPair.first);
-		body.append(":\"");
+		body.append("\":\"");
 
 		std::string value = jsonPair.second.getAsString();
 
