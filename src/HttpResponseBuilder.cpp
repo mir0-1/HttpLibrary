@@ -143,15 +143,14 @@ void HttpResponseBuilder::buildJsonBody()
 {
 	if (contentType.empty())
 		setContentType(JSON);
-	body.append("{\r\n");
+	body.append("{");
 
 	jsonMap->resetIterator();
 	while (!jsonMap->isIteratorAtEnd())
 	{
 		std::pair<std::string, ValueWrapper> jsonPair = jsonMap->getNextPairFromIterator();
-		body.append("\t");
 		body.append(jsonPair.first);
-		body.append(": \"");
+		body.append(":\"");
 
 		std::string value = jsonPair.second.getAsString();
 
@@ -176,10 +175,10 @@ void HttpResponseBuilder::buildJsonBody()
 		if (jsonMap->isIteratorReset())
 			break;
 
-		body.append(",\r\n");
+		body.append(",");
 	}
 
-	body.append("\r\n}");
+	body.append("}");
 }
 
 std::string& HttpResponseBuilder::build()
