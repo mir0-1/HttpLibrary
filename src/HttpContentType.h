@@ -4,5 +4,7 @@ enum HttpContentType
 {
 	JSON,
 	HTML,
-	TEXT
+	TEXT,
+	CSS,
+	JS
 };

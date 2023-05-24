@@ -87,6 +87,12 @@ HttpResponseBuilder& HttpResponseBuilder::setContentType(HttpContentType content
 	if (contentType == HttpContentType::HTML)
 		return setContentType("text/html");
 
+	if (contentType == HttpContentType::CSS)
+		return setContentType("text/css");
+
+	if (contentType == HttpContentType::JS)
+		return setContentType("text/javascript");
+
 	return setContentType("text/plain");
 }
 
