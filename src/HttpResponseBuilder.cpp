@@ -167,7 +167,7 @@ void HttpResponseBuilder::buildJsonBody()
 			}
 		}
 
-		if (noQuotesFirstIndex < jsonFieldOriginalLength - 1)
+		if (noQuotesFirstIndex < jsonFieldOriginalLength )
 			body.append(value, noQuotesFirstIndex, jsonFieldOriginalLength - noQuotesFirstIndex);
 
 		body.append("\"");
